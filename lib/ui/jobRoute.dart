@@ -15,6 +15,11 @@ class JobRoute extends StatelessWidget {
           (element) => element.status == globals.ContractStatus.completed,
         )
         .toList();
+    List<Contract> canceledContracts = globals.contracts
+        .where(
+          (element) => element.status == globals.ContractStatus.canceled,
+        )
+        .toList();
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.only(
@@ -183,7 +188,7 @@ class JobRoute extends StatelessWidget {
                         header: Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            'Open Service Request',
+                            'Canceled Services',
                             style: textTheme.headline6,
                           ),
                         ),
@@ -195,9 +200,9 @@ class JobRoute extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: List.generate(
-                                globals.openRequests.length,
-                                (index) => OpenRequestWidget(
-                                  openRequest: globals.openRequests[index],
+                                canceledContracts.length,
+                                (index) => CanceledContractWidget(
+                                  contract: canceledContracts[index],
                                 ),
                               ),
                             ),

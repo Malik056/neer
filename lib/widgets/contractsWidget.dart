@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:neer/globals/constants.dart';
@@ -64,7 +65,7 @@ class ContractWidget extends StatelessWidget {
             onTap: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => ServicingOptionRoute(
                       contract: contract,
                     ),

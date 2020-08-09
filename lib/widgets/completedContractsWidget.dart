@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:neer/models/contract.dart';
 import 'package:neer/models/openRequest.dart';
 import 'package:neer/models/serviceProviderModel.dart';
+import 'package:neer/ui/jobDetails.dart';
 import 'package:neer/ui/servicingOptions.dart';
 import 'package:neer/widgets/customDialogWidget.dart';
 
@@ -58,7 +60,7 @@ class CompletedContractWidget extends StatelessWidget {
             onTap: () {
               Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => ServicingOptionRoute(
                       contract: contract,
                     ),
@@ -67,7 +69,13 @@ class CompletedContractWidget extends StatelessWidget {
             child: Row(
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => CompletedJobDetailsRoute(
+                        contract: contract,
+                      ),
+                    ));
+                  },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: Text(
@@ -103,6 +111,88 @@ class CompletedContractWidget extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class CanceledContractWidget extends StatelessWidget {
+  final Contract contract;
+
+  CanceledContractWidget({Key key, this.contract}) : super(key: key) {
+    assert(contract?.endDate != null);
+  }
+  @override
+  Widget build(BuildContext context) {
+    // ServiceProviderModel provider = contract.serviceProviderModel;
+    OpenRequest request = contract.openRequest;
+
+    TextTheme textTheme = Theme.of(context).textTheme;
+    return Container(
+      padding: EdgeInsets.all(4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${request.serviceType} (${request.requestId})',
+            style: textTheme.subtitle2,
+          ),
+          SizedBox(
+            height: 4,
+          ),
+          // Text.rich(
+          //   TextSpan(
+          //     text: 'Service by - ',
+          //     style: textTheme.bodyText2,
+          //     children: [
+          //       TextSpan(
+          //         text: provider.name,
+          //         style: textTheme.bodyText1.copyWith(
+          //           fontStyle: FontStyle.italic,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(
+          //   height: 4,
+          // ),
+          Text('Canceled on ${DateFormat(DateFormat.YEAR_ABBR_MONTH_DAY).format(
+            DateTime.fromMillisecondsSinceEpoch(
+              contract.endDate,
+              isUtc: true,
+            ),
+          )}'),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => ServicingOptionRoute(
+                      contract: contract,
+                    ),
+                  ));
+            },
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) => CanceledJobDetailsRoute(
+                    contract: contract,
+                  ),
+                ));
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  'Review',
+                  style: textTheme.bodyText2.copyWith(
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
             ),
           )
         ],

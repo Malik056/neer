@@ -2,7 +2,8 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:neer/providers/phoneAuthProvider.dart';
 import 'package:neer/providers/rainwaterDataProvider.dart';
-import 'package:neer/ui/job_route.dart';
+import 'package:neer/ui/firstPageDecider.dart';
+import 'package:neer/ui/jobRoute.dart';
 
 import 'bloc/connectivityBloc.dart';
 import 'globals/constants.dart' as globals;
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
             TargetPlatform.android: ZoomPageTransitionsBuilder(),
           })),
       themeMode: ThemeMode.dark,
-      home: JobRoute(), //FirstPageDecider(),
+      home: FirstPageDecider(),
     );
   }
 }

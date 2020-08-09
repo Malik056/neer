@@ -16,6 +16,7 @@ class Contract {
   int endDate;
   int dateInspected;
   String inspectedBy;
+  String cancelReason;
 
   //temp
   List<Milestone> milestones = [];
@@ -34,6 +35,7 @@ class Contract {
     this.endDate,
     this.dateInspected,
     this.inspectedBy,
+    this.cancelReason,
   });
 
   Map<String, dynamic> toMap() {
@@ -49,6 +51,7 @@ class Contract {
       'endDate': endDate,
       'dateInspected': dateInspected,
       'inspectedBy': inspectedBy,
+      'cancelReason': cancelReason,
     };
   }
 
@@ -67,6 +70,7 @@ class Contract {
       endDate: map['endDate'],
       dateInspected: map['dateInspected'],
       inspectedBy: map['inspectedBy'],
+      cancelReason: map['cancelReason'],
     );
   }
 }
