@@ -9,6 +9,8 @@ import 'package:neer/ui/homeScreen.dart';
 class CreateAnAccountRoute extends StatelessWidget {
   final GlobalKey<FormState> formState = GlobalKey<FormState>();
 
+  static var name = "CreateAnAccountRoute";
+
   showInSnackbar(String text, BuildContext context,
       {Color color = Colors.black}) {
     Scaffold.of(context).showSnackBar(
@@ -147,8 +149,11 @@ class CreateAnAccountRoute extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Container(
-                      padding: EdgeInsets.all(15),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Align(
+                      alignment: Alignment.center,
                       child: RaisedButton(
                         onPressed: () async {
                           if (!isTermsAccepted) {

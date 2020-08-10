@@ -66,12 +66,16 @@ class ActionCenterRequestWidget extends StatelessWidget {
             ),
             onTap: () {
               Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => QuoteCenterRoute(
-                      quoteRequest: quote,
-                    ),
-                  ));
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => QuoteCenterRoute(
+                    quoteRequest: quote,
+                  ),
+                  settings: RouteSettings(
+                    name: QuoteCenterRoute.name,
+                  ),
+                ),
+              );
             },
           ),
         ],

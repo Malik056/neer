@@ -6,6 +6,7 @@ import 'package:neer/widgets/serviceProviderWidget.dart';
 import 'package:neer/widgets/tagText.dart';
 
 class ProviderProfile extends StatelessWidget {
+  static final String name = "ProviderProfile";
   final ServiceProviderModel serviceProviderModel;
 
   const ProviderProfile({Key key, this.serviceProviderModel}) : super(key: key);

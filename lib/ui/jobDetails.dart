@@ -4,10 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/models/contract.dart';
 import 'package:neer/models/openRequest.dart';
-import 'package:neer/models/payment.dart';
 import 'package:neer/models/serviceProviderModel.dart';
 
 class CompletedJobDetailsRoute extends StatelessWidget {
+  static final String name = "CompleteJobDetailsRoute";
   final Contract contract;
 
   CompletedJobDetailsRoute({Key key, this.contract}) : super(key: key) {
@@ -204,6 +204,7 @@ class CompletedJobDetailsRoute extends StatelessWidget {
 }
 
 class CanceledJobDetailsRoute extends StatelessWidget {
+  static final String name = "CanceledJobDetailsRoute";
   final Contract contract;
 
   CanceledJobDetailsRoute({Key key, this.contract}) : super(key: key) {

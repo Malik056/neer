@@ -4,6 +4,7 @@ import 'package:neer/widgets/actionCenterRequestWidget.dart';
 import 'package:neer/widgets/customDialogWidget.dart';
 
 class ActionCenterRoute extends StatelessWidget {
+  static final String name = "ActionCenterRoute";
   final List<QuoteRequest> quoteRequests;
 
   const ActionCenterRoute({Key key, this.quoteRequests}) : super(key: key);

@@ -59,6 +59,9 @@ class FirstPageDecider extends StatelessWidget {
                             Navigator.of(context).pushReplacement(
                               CupertinoPageRoute(
                                 builder: (c) => PhoneNumberAuthRoute(),
+                                settings: RouteSettings(
+                                  name: PhoneNumberAuthRoute.name,
+                                ),
                               ),
                             );
                           });
@@ -88,6 +91,9 @@ class FirstPageDecider extends StatelessWidget {
                                     CupertinoPageRoute(
                                       builder: (context) =>
                                           CreateAnAccountRoute(),
+                                      settings: RouteSettings(
+                                        name: CreateAnAccountRoute.name,
+                                      ),
                                     ),
                                     (route) => false);
                               });

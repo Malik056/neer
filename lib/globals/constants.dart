@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neer/bloc/connectivityBloc.dart';
+import 'package:neer/bloc/waitTimeBloc.dart';
 import 'package:neer/models/contract.dart';
 import 'package:neer/models/milestone.dart';
 import 'package:neer/models/openRequest.dart';
@@ -8,7 +9,7 @@ import 'package:neer/models/quotesModel.dart';
 import 'package:neer/models/review.dart';
 import 'package:neer/models/serviceProviderModel.dart';
 import 'package:neer/models/serviceType.dart';
-import 'package:neer/providers/phoneAuthProvider.dart';
+import 'package:neer/providers/authProvider.dart';
 import 'package:neer/models/user.dart';
 import 'package:neer/providers/rainwaterDataProvider.dart';
 
@@ -31,9 +32,10 @@ class ContractStatus {
 }
 
 ConnectivityBloc connectivityBloc;
-PhoneAuthProvider phoneAuthProvider;
+MyPhoneAuthProvider phoneAuthProvider;
 GlobalKey<NavigatorState> navigatorState;
 RainWaterDataProvider rainWaterDataProvider;
+WaitingTimeBloc waitingTimeBloc;
 
 List<ServiceProviderModel> serviceProviders = [
   ServiceProviderModel(

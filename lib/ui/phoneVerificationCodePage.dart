@@ -1,12 +1,10 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:neer/bloc/phoneAuthBloc.dart';
+import 'package:neer/bloc/waitTimeBloc.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/models/user.dart';
 import 'package:neer/ui/createAnAccount.dart';
@@ -14,43 +12,8 @@ import 'package:neer/ui/homeScreen.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 
-enum _StopWatchEvents { start, stop, decrement }
-
-class _WaitingTimeBloc extends Bloc<_StopWatchEvents, int> {
-  Timer timer;
-  final int maxTime = 15;
-  _WaitingTimeBloc() : super(15) {
-    timer = Timer.periodic(Duration(seconds: 1), (_timer) {
-      add(_StopWatchEvents.decrement);
-    });
-  }
-
-  void dispose() {
-    timer?.cancel();
-  }
-
-  @override
-  Stream<int> mapEventToState(event) async* {
-    print(event);
-    if (event == _StopWatchEvents.start) {
-      timer?.cancel();
-      timer = Timer.periodic(Duration(seconds: 1), (_timer) {
-        add(_StopWatchEvents.decrement);
-      });
-      yield 15;
-    } else if (event == _StopWatchEvents.decrement) {
-      if (state == 1) {
-        timer?.cancel();
-      }
-      yield state - 1;
-    } else if (event == _StopWatchEvents.stop) {
-      timer?.cancel();
-      yield 0;
-    }
-  }
-}
-
 class PhoneVerificationCodeRoute extends StatefulWidget {
+  static final String name = "PhoneVerificationCodeRoute";
   PhoneVerificationCodeRoute({Key key}) : super(key: key);
 
   @override
@@ -60,15 +23,16 @@ class PhoneVerificationCodeRoute extends StatefulWidget {
 
 class _PhoneVerificationCodeRouteState
     extends State<PhoneVerificationCodeRoute> {
-  // bool incomplete = true;
   bool isLoading = false;
   String code = '';
-  _WaitingTimeBloc _waitingTimeBloc;
+  WaitingTimeBloc _waitingTimeBloc;
+  bool stopAutoAuth = false;
+
   @override
   void initState() {
     super.initState();
-    _waitingTimeBloc = _WaitingTimeBloc();
-    _waitingTimeBloc.add(_StopWatchEvents.start);
+    _waitingTimeBloc = globals.waitingTimeBloc;
+    _waitingTimeBloc.add(StopWatchEvents.start);
   }
 
   @override
@@ -104,7 +68,7 @@ class _PhoneVerificationCodeRouteState
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'We have Sent a 4 digit verification code on \n${globals.phoneAuthProvider.phoneNumber}',
+                  'We have Sent a 6 digit verification code on \n${globals.phoneAuthProvider.phoneNumber}',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -119,37 +83,46 @@ class _PhoneVerificationCodeRouteState
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&
                               snapshot.data == PhoneAuthState.authenticated) {
-                            WidgetsBinding.instance
-                                .addPostFrameCallback((timeStamp) async {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              AuthResult result = await FirebaseAuth.instance
-                                  .signInWithCredential(
-                                      globals.phoneAuthProvider.credentials)
-                                  .catchError((error) => null);
-                              if (result?.user != null) {
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    CupertinoPageRoute(
-                                      builder: (context) => HomeScreenRoute(),
-                                      settings: RouteSettings(
-                                        name: HomeScreenRoute.name,
+                            if (!stopAutoAuth) {
+                              WidgetsBinding.instance.addPostFrameCallback(
+                                (timeStamp) async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  bool exists =
+                                      await globals.phoneAuthProvider.signIn();
+                                  if (exists == null) {
+                                    if (mounted) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    }
+                                    return;
+                                  } else if (exists) {
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      CupertinoPageRoute(
+                                        builder: (context) => HomeScreenRoute(),
+                                        settings: RouteSettings(
+                                          name: HomeScreenRoute.name,
+                                        ),
                                       ),
-                                    ),
-                                    (route) => false);
-                              }
-                            });
-
-                            // return OTPTextField(
-                            //   length: 6,
-                            //   fieldStyle: FieldStyle.box,
-                            //   fieldWidth: 40,
-                            //   width: 300,
-                            //   onCompleted: (text) async {},
-                            // );
+                                      (route) => false,
+                                    );
+                                  } else {
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      CupertinoPageRoute(
+                                        builder: (context) =>
+                                            CreateAnAccountRoute(),
+                                        settings: RouteSettings(
+                                          name: CreateAnAccountRoute.name,
+                                        ),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  }
+                                },
+                              );
+                            }
                           }
                           return OTPTextField(
                             length: 6,
@@ -157,28 +130,30 @@ class _PhoneVerificationCodeRouteState
                             fieldWidth: 40,
                             width: 300,
                             onCompleted: (text) async {
+                              stopAutoAuth = true;
                               code = globals.phoneAuthProvider.verificationId;
                               setState(() {
                                 isLoading = true;
                               });
-                              var credentials = PhoneAuthProvider.getCredential(
-                                verificationId: code,
-                                smsCode: text,
-                              );
-                              var authResult = await FirebaseAuth.instance
-                                  .signInWithCredential(credentials)
-                                  .catchError((error) => null);
-                              if (authResult?.user != null) {
-                                Firestore.instance
-                                    .collection('users')
-                                    .document(authResult.user.uid)
-                                    .get()
-                                    .then((value) async {
-                                  if (value.exists) {
-                                    globals.user = User();
-                                    globals.user.uid = value.documentID;
-                                    User.copySnapshotToUser(
-                                        globals.user, value);
+                              try {
+                                var credentials =
+                                    PhoneAuthProvider.getCredential(
+                                  verificationId: code,
+                                  smsCode: text,
+                                );
+                                globals.phoneAuthProvider.credentials =
+                                    credentials;
+                                if (credentials == null) {
+                                  stopAutoAuth = false;
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  return;
+                                }
+                                try {
+                                  bool result =
+                                      await globals.phoneAuthProvider.signIn();
+                                  if (result ?? false) {
                                     Navigator.pushAndRemoveUntil(
                                         context,
                                         CupertinoPageRoute(
@@ -193,26 +168,95 @@ class _PhoneVerificationCodeRouteState
                                     globals.user = User();
                                     globals.user.phoneNumber =
                                         globals.phoneAuthProvider.phoneNumber;
-                                    globals.user.uid = authResult.user.uid;
+                                    globals.user.uid = (await FirebaseAuth
+                                            .instance
+                                            .currentUser())
+                                        .uid;
+                                    setState(() {
+                                      isLoading = false;
+                                    });
                                     Navigator.push(
                                       context,
                                       CupertinoPageRoute(
                                         builder: (context) =>
                                             CreateAnAccountRoute(),
+                                        settings: RouteSettings(
+                                          name: CreateAnAccountRoute.name,
+                                        ),
                                       ),
                                     );
                                   }
-                                }).catchError((error) {
-                                  showInSnackbar(
-                                    error.toString(),
-                                    context,
-                                    color: Colors.red,
-                                  );
+                                } catch (ex) {
+                                  stopAutoAuth = false;
+                                  showInSnackbar('$ex', context);
+                                }
+                                var authResult = await FirebaseAuth.instance
+                                    .signInWithCredential(credentials)
+                                    .catchError((error) {
+                                  print(error);
+                                  return null;
+                                });
+                                if (authResult?.user != null) {
+                                  Firestore.instance
+                                      .collection('users')
+                                      .document(authResult.user.uid)
+                                      .get()
+                                      .then((value) async {
+                                    if (value.exists) {
+                                      globals.user = User();
+                                      globals.user.uid = value.documentID;
+                                      User.copySnapshotToUser(
+                                        globals.user,
+                                        value,
+                                      );
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) =>
+                                                HomeScreenRoute(),
+                                            settings: RouteSettings(
+                                              name: HomeScreenRoute.name,
+                                            ),
+                                          ),
+                                          (route) => false);
+                                    } else {
+                                      globals.user = User();
+                                      globals.user.phoneNumber =
+                                          globals.phoneAuthProvider.phoneNumber;
+                                      globals.user.uid = authResult.user.uid;
+                                      Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                          builder: (context) =>
+                                              CreateAnAccountRoute(),
+                                          settings: RouteSettings(
+                                            name: CreateAnAccountRoute.name,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }).catchError((error) {
+                                    showInSnackbar(
+                                      error.toString(),
+                                      context,
+                                      color: Colors.red,
+                                    );
+                                    stopAutoAuth = false;
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  });
+                                } else {
+                                  showInSnackbar('Bad OTP', context);
+                                  stopAutoAuth = false;
                                   setState(() {
                                     isLoading = false;
                                   });
-                                });
-                              } else {
+                                }
+                              } catch (err) {
+                                showInSnackbar('Bad OTP', context);
+                                stopAutoAuth = false;
+                                print(err);
                                 setState(() {
                                   isLoading = false;
                                 });
@@ -232,7 +276,7 @@ class _PhoneVerificationCodeRouteState
                   height: 60,
                   width: 120,
                   child: StreamBuilder<int>(
-                      initialData: 15,
+                      initialData: 30,
                       stream: _waitingTimeBloc,
                       builder: (context, snapshot) {
                         return RaisedButton(
@@ -247,84 +291,15 @@ class _PhoneVerificationCodeRouteState
                                   setState(() {
                                     isLoading = true;
                                   });
-                                  globals.phoneAuthProvider.sendCode(
-                                      onCodeSent: () {
-                                        _waitingTimeBloc
-                                            .add(_StopWatchEvents.start);
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                      },
-                                      codeAutoRetrievalTimeout: () {},
-                                      verificationFailed: (str) {
-                                        _waitingTimeBloc
-                                            .add(_StopWatchEvents.start);
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        Scaffold.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content:
-                                              Text('Verification Failed: $str'),
-                                          backgroundColor: Colors.red,
-                                        ));
-                                      },
-                                      onVerificationCompleted: () async {
-                                        globals.user = User();
-                                        globals.user.phoneNumber = globals
-                                            .phoneAuthProvider.phoneNumber;
-                                        var result = await FirebaseAuth.instance
-                                            .signInWithCredential(
-                                          globals.phoneAuthProvider.credentials,
-                                        )
-                                            .catchError((error) {
-                                          print(error);
-                                          return null;
-                                        });
-                                        if (result.user != null) {
-                                          globals.user.uid = result.user.uid;
-                                          final snapshot = await Firestore
-                                              .instance
-                                              .collection('users')
-                                              .document(globals.user.uid)
-                                              .get();
-                                          if (snapshot.exists) {
-                                            User.copySnapshotToUser(
-                                                globals.user, snapshot);
-                                            Navigator.push(
-                                              context,
-                                              CupertinoPageRoute(
-                                                builder: (ctx) =>
-                                                    HomeScreenRoute(),
-                                                settings: RouteSettings(
-                                                  name: HomeScreenRoute.name,
-                                                ),
-                                              ),
-                                            );
-                                          } else {
-                                            Navigator.push(
-                                                context,
-                                                CupertinoPageRoute(
-                                                  builder: (crx) =>
-                                                      CreateAnAccountRoute(),
-                                                ));
-                                          }
-                                        } else {
-                                          _waitingTimeBloc
-                                              .add(_StopWatchEvents.start);
-                                          setState(() {
-                                            isLoading = false;
-                                          });
-                                          Scaffold.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content:
-                                                Text("Invalid Credentials"),
-                                            backgroundColor: Colors.red,
-                                          ));
-                                        }
-                                      },
-                                      phoneNumber: globals
-                                          .phoneAuthProvider.phoneNumber);
+                                  _waitingTimeBloc.add(StopWatchEvents.start);
+                                  FirebaseAuth.instance.verifyPhoneNumber(
+                                      phoneNumber:
+                                          globals.phoneAuthProvider.phoneNumber,
+                                      timeout: null,
+                                      verificationCompleted: null,
+                                      verificationFailed: null,
+                                      codeSent: null,
+                                      codeAutoRetrievalTimeout: null);
                                 },
                           child: Text(
                             snapshot.data > 0
@@ -334,15 +309,6 @@ class _PhoneVerificationCodeRouteState
                               color: Colors.white,
                             ),
                           ),
-                          // roundLoadingShape: false,
-                          // loader: (time) {
-                          //   return Text(
-                          //     'Wait | $time',
-                          //     style: textTheme.button.copyWith(
-                          //       color: Colors.white,
-                          //     ),
-                          //   );
-                          // },
                         );
                       }),
                 ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/ui/jobRoute.dart';
 import 'package:neer/ui/rainWater.dart';
+import 'package:neer/ui/userProfile.dart';
 
 class HomeScreenRoute extends StatefulWidget {
   static String name = "HomeScreenRoute";
@@ -68,7 +69,7 @@ class HomeScreenRouteState extends State<HomeScreenRoute> {
         ),
         body: selectedIndex == 0
             ? HomeScreenWidget()
-            : selectedIndex == 1 ? JobRoute() : JobRoute(),
+            : selectedIndex == 1 ? JobRoute() : UserProfile(),
       ),
     );
   }
@@ -211,7 +212,7 @@ class HomeScreenWidget extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    Text('Rain Water'),
+                    Text('Water Quality'),
                   ],
                 ),
                 Spacer(),
@@ -234,7 +235,7 @@ class HomeScreenWidget extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    Text('Rain Water'),
+                    Text('Grey Water'),
                   ],
                 ),
                 Spacer(),
@@ -249,7 +250,7 @@ class HomeScreenWidget extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    Text('Rain Water'),
+                    Text('Waste Water'),
                   ],
                 ),
                 Spacer(),

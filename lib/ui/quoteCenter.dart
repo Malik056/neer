@@ -4,6 +4,7 @@ import 'package:neer/models/quotesModel.dart';
 import 'package:neer/ui/providerProfile.dart';
 
 class QuoteCenterRoute extends StatelessWidget {
+  static final String name = "QuoteCenterRoute";
   final QuoteRequest quoteRequest;
 
   const QuoteCenterRoute({Key key, this.quoteRequest}) : super(key: key);
@@ -74,6 +75,9 @@ class QuoteCenterRoute extends StatelessWidget {
                                   builder: (context) => ProviderProfile(
                                       serviceProviderModel:
                                           quoteRequest.serviceProviderModel),
+                                  settings: RouteSettings(
+                                    name: ProviderProfile.name,
+                                  ),
                                 ));
                           },
                           child: Padding(

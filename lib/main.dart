@@ -1,9 +1,12 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:neer/providers/phoneAuthProvider.dart';
+import 'package:neer/bloc/waitTimeBloc.dart';
+import 'package:neer/providers/authProvider.dart';
 import 'package:neer/providers/rainwaterDataProvider.dart';
+import 'package:neer/ui/feedback.dart';
 import 'package:neer/ui/firstPageDecider.dart';
-import 'package:neer/ui/jobRoute.dart';
+import 'package:neer/ui/settings.dart';
 
 import 'bloc/connectivityBloc.dart';
 import 'globals/constants.dart' as globals;
@@ -12,8 +15,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var connection = await Connectivity().checkConnectivity();
   globals.connectivityBloc = ConnectivityBloc(connection);
-  globals.phoneAuthProvider = PhoneAuthProvider();
+  globals.phoneAuthProvider = MyPhoneAuthProvider();
   globals.rainWaterDataProvider = RainWaterDataProvider();
+  globals.waitingTimeBloc = WaitingTimeBloc();
   runApp(MyApp());
 }
 
@@ -24,6 +28,8 @@ class MyApp extends StatelessWidget {
     // globals.navigatorState = GlobalKey<NavigatorState>();
     return MaterialApp(
       title: 'Neer',
+      builder: BotToastInit(), //1. call BotToastInit
+      navigatorObservers: [BotToastNavigatorObserver()],
       debugShowCheckedModeBanner: false,
       // navigatorKey: globals.navigatorState,
       theme: ThemeData(

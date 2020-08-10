@@ -1,7 +1,15 @@
+import 'package:bot_toast/bot_toast.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:neer/bloc/waitTimeBloc.dart';
 import 'package:neer/customUIDecorations/customBorder.dart';
+import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/models/contract.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 import 'package:rating_bar/rating_bar.dart';
 
 class CancelJobRequestDialogWidget extends StatelessWidget {
@@ -504,9 +512,7 @@ class ReviewWidget extends StatelessWidget {
             ),
             RatingBar(
               onRatingChanged: (rating) {
-                // setState(() {
                 currentRating = rating * 2;
-                // });
               },
               isHalfAllowed: true,
               maxRating: 5,
@@ -729,5 +735,286 @@ class DisputeContractWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class CodeVerificationDialog extends StatelessWidget {
+  final String phoneNumber;
+  CodeVerificationDialog({Key key, this.phoneNumber}) : super(key: key);
+
+//   @override
+//   _CodeVerificationDialogState createState() => _CodeVerificationDialogState();
+// }
+
+// class _CodeVerificationDialogState extends State<CodeVerificationDialog> {
+//   // int timeRemaining = 4;
+//   // Timer _timer;
+//   String error;
+
+//   _CodeVerificationDialogState();
+
+//   @override
+//   void initState() {
+//     super.initState();
+//   }
+
+//   @override
+//   void dispose() {
+//     super.dispose();
+//   }
+
+  @override
+  Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    bool isLoading = false;
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      shape: MyCustomShapeBorder(
+        2,
+        Colors.black,
+        0,
+      ),
+      insetPadding: EdgeInsets.all(0),
+      child: Material(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: StreamBuilder<int>(
+              stream: globals.waitingTimeBloc,
+              initialData: globals.waitingTimeBloc.state,
+              builder: (context, snapshot) {
+                int timeRemaining = snapshot.data;
+                if (timeRemaining == null) {
+                  timeRemaining = globals.waitingTimeBloc.state ?? 30;
+                }
+                return StatefulBuilder(builder: (context, setState) {
+                  return ModalProgressHUD(
+                    inAsyncCall: isLoading,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Enter verification code',
+                          style: textTheme.headline6,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Text.rich(
+                            TextSpan(
+                              text:
+                                  'We have sent you a 6 digit verification code on ',
+                              children: [
+                                TextSpan(
+                                  text: '$phoneNumber',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                            style: textTheme.caption,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        OTPTextField(
+                          fieldStyle: FieldStyle.box,
+                          length: 6,
+                          fieldWidth: 50,
+                          obscureText: false,
+                          onCompleted: (text) async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            bool result =
+                                await globals.phoneAuthProvider.verify(text);
+                            if (result) {
+                              if (globals.user.phoneNumber != phoneNumber) {
+                                result = await globals.phoneAuthProvider
+                                    .updateCurrentUserCredentials();
+                                if (result == null || result == false) {
+                                  showError('Bad OTP');
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  return;
+                                }
+                              }
+                              Navigator.pop(context, true);
+                            } else {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              showError('Bad OTP');
+                            }
+                          },
+                          textFieldAlignment: MainAxisAlignment.spaceEvenly,
+                          width: 420,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          timeRemaining <= 0
+                              ? 'Time elapsed.'
+                              : '0:${timeRemaining < 10 ? '0$timeRemaining' : timeRemaining}',
+                          style: TextStyle(
+                            color: timeRemaining <= 0
+                                ? Colors.black
+                                : Colors.green[400],
+                          ),
+                        ),
+                        // if (timeRemaining <= 0)
+                        AnimatedContainer(
+                          height: timeRemaining > 0 ? 0 : 45,
+                          duration: Duration(
+                            milliseconds: 200,
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: FlatButton(
+                              child: Text('Resend Code'),
+                              onPressed: () {
+                                if (globals.connectivityBloc.state ==
+                                    ConnectivityResult.none) {
+                                  showError("No Internet Connection");
+                                  return;
+                                }
+                                globals.waitingTimeBloc
+                                    .add(StopWatchEvents.start);
+                                FirebaseAuth.instance.verifyPhoneNumber(
+                                  phoneNumber: phoneNumber,
+                                  timeout: Duration(seconds: 30),
+                                  verificationCompleted: (credentials) {
+                                    globals.phoneAuthProvider.credentials =
+                                        credentials;
+                                  },
+                                  verificationFailed: null,
+                                  codeSent: (verificationId,
+                                      [forceResendCode]) {
+                                    globals.phoneAuthProvider.verificationId =
+                                        verificationId;
+                                  },
+                                  codeAutoRetrievalTimeout: (verificationId) {
+                                    globals.phoneAuthProvider.verificationId =
+                                        verificationId;
+                                  },
+                                );
+                                // globals.phoneAuthProvider.sendCode(
+                                //   onCodeSent: () {},
+                                //   verificationFailed: (error) {
+                                //     showError(error);
+                                //   },
+                                //   phoneNumber: phoneNumber,
+                                //   onVerificationCompleted: () async {
+                                //     AuthResult result;
+                                //     try {
+                                //       result = await FirebaseAuth.instance
+                                //           .signInWithCredential(
+                                //         globals.phoneAuthProvider.credentials,
+                                //       );
+                                //     } catch (ex) {
+                                //       print(ex);
+                                //       // showError('');
+                                //       return;
+                                //     }
+                                //     if (result?.user != null) {
+                                //       Navigator.pop(context, true);
+                                //     }
+                                //   },
+                                //   codeAutoRetrievalTimeout: () {},
+                                //   timeout: 1,
+                                // );
+                              },
+                              color: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(3.0),
+                                side: BorderSide(color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // SizedBox(
+                        //   height: 8,
+                        // ),
+                        // error == null ? SizedBox() : Text('$error'),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            color: Colors.black12,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: Text(
+                              'All communications and invoices will be sent to your updated contact details',
+                              textAlign: TextAlign.start,
+                              style: textTheme.caption,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'Cancel',
+                                style: textTheme.button.copyWith(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            GestureDetector(
+                              onTap: null,
+                              child: Text(
+                                "Confirm",
+                                style: textTheme.button
+                                    .copyWith(color: Colors.grey),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
+                  );
+                });
+              }),
+        ),
+      ),
+    );
+  }
+
+  void showError(String err) {
+    BotToast.showCustomText(toastBuilder: (fn) {
+      return Container(
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+        ),
+        padding: EdgeInsets.all(16.0),
+        child: Text('$err'),
+      );
+    });
   }
 }

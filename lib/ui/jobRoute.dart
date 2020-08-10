@@ -28,59 +28,57 @@ class JobRoute extends StatelessWidget {
           right: 20,
           bottom: 20,
         ),
-        child: StatefulBuilder(builder: (context, setState) {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'My Jobs',
-                  style: textTheme.headline5,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                ExpandableNotifier(
-                  child: ScrollOnExpand(
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          border: Border(
-                        bottom: BorderSide(
-                            color: Colors.black,
-                            width: 1,
-                            style: BorderStyle.solid),
-                      )),
-                      child: ExpandablePanel(
-                        header: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Open Service Request',
-                            style: textTheme.headline6,
-                          ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'My Jobs',
+                style: textTheme.headline5,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              ExpandableNotifier(
+                child: ScrollOnExpand(
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      bottom: 10,
+                    ),
+                    decoration: BoxDecoration(
+                        border: Border(
+                      bottom: BorderSide(
+                          color: Colors.black,
+                          width: 1,
+                          style: BorderStyle.solid),
+                    )),
+                    child: ExpandablePanel(
+                      header: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Open Service Request',
+                          style: textTheme.headline6,
                         ),
-                        expanded: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: 300,
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: List.generate(
-                                globals.openRequests.length,
-                                (index) => Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    OpenRequestWidget(
-                                      openRequest: globals.openRequests[index],
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                ),
+                      ),
+                      expanded: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: 300,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: List.generate(
+                              globals.openRequests.length,
+                              (index) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  OpenRequestWidget(
+                                    openRequest: globals.openRequests[index],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -89,39 +87,39 @@ class JobRoute extends StatelessWidget {
                     ),
                   ),
                 ),
-                ExpandableNotifier(
-                  child: ScrollOnExpand(
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          border: Border(
-                        bottom: BorderSide(
-                            color: Colors.black,
-                            width: 1,
-                            style: BorderStyle.solid),
-                      )),
-                      child: ExpandablePanel(
-                        header: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Service Under Contract',
-                            style: textTheme.headline6,
-                          ),
+              ),
+              ExpandableNotifier(
+                child: ScrollOnExpand(
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      bottom: 10,
+                    ),
+                    decoration: BoxDecoration(
+                        border: Border(
+                      bottom: BorderSide(
+                          color: Colors.black,
+                          width: 1,
+                          style: BorderStyle.solid),
+                    )),
+                    child: ExpandablePanel(
+                      header: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Service Under Contract',
+                          style: textTheme.headline6,
                         ),
-                        expanded: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: 300,
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: List.generate(
-                                globals.contracts.length,
-                                (index) => ContractWidget(
-                                  contract: globals.contracts[index],
-                                ),
+                      ),
+                      expanded: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: 300,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: List.generate(
+                              globals.contracts.length,
+                              (index) => ContractWidget(
+                                contract: globals.contracts[index],
                               ),
                             ),
                           ),
@@ -130,39 +128,39 @@ class JobRoute extends StatelessWidget {
                     ),
                   ),
                 ),
-                ExpandableNotifier(
-                  child: ScrollOnExpand(
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          border: Border(
-                        bottom: BorderSide(
-                            color: Colors.black,
-                            width: 1,
-                            style: BorderStyle.solid),
-                      )),
-                      child: ExpandablePanel(
-                        header: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Completed Services',
-                            style: textTheme.headline6,
-                          ),
+              ),
+              ExpandableNotifier(
+                child: ScrollOnExpand(
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      bottom: 10,
+                    ),
+                    decoration: BoxDecoration(
+                        border: Border(
+                      bottom: BorderSide(
+                          color: Colors.black,
+                          width: 1,
+                          style: BorderStyle.solid),
+                    )),
+                    child: ExpandablePanel(
+                      header: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Completed Services',
+                          style: textTheme.headline6,
                         ),
-                        expanded: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: 300,
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: List.generate(
-                                completedContracts.length,
-                                (index) => CompletedContractWidget(
-                                  contract: completedContracts[index],
-                                ),
+                      ),
+                      expanded: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: 300,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: List.generate(
+                              completedContracts.length,
+                              (index) => CompletedContractWidget(
+                                contract: completedContracts[index],
                               ),
                             ),
                           ),
@@ -171,39 +169,39 @@ class JobRoute extends StatelessWidget {
                     ),
                   ),
                 ),
-                ExpandableNotifier(
-                  child: ScrollOnExpand(
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          border: Border(
-                        bottom: BorderSide(
-                            color: Colors.black,
-                            width: 1,
-                            style: BorderStyle.solid),
-                      )),
-                      child: ExpandablePanel(
-                        header: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Canceled Services',
-                            style: textTheme.headline6,
-                          ),
+              ),
+              ExpandableNotifier(
+                child: ScrollOnExpand(
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      bottom: 10,
+                    ),
+                    decoration: BoxDecoration(
+                        border: Border(
+                      bottom: BorderSide(
+                          color: Colors.black,
+                          width: 1,
+                          style: BorderStyle.solid),
+                    )),
+                    child: ExpandablePanel(
+                      header: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Canceled Services',
+                          style: textTheme.headline6,
                         ),
-                        expanded: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: 300,
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: List.generate(
-                                canceledContracts.length,
-                                (index) => CanceledContractWidget(
-                                  contract: canceledContracts[index],
-                                ),
+                      ),
+                      expanded: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: 300,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: List.generate(
+                              canceledContracts.length,
+                              (index) => CanceledContractWidget(
+                                contract: canceledContracts[index],
                               ),
                             ),
                           ),
@@ -212,10 +210,10 @@ class JobRoute extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        }),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

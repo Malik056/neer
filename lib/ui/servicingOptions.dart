@@ -10,6 +10,7 @@ import 'package:neer/ui/paymentRoute.dart';
 import 'package:neer/widgets/customDialogWidget.dart';
 
 class ServicingOptionRoute extends StatelessWidget {
+  static final String name = "ServicingOptionRoute";
   final Contract contract;
 
   const ServicingOptionRoute({Key key, this.contract}) : super(key: key);

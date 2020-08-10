@@ -172,23 +172,31 @@ class RainWaterRouteState extends State<RainWaterRoute> {
                     height: 5,
                   ),
                   for (int i = 0; i < sources.length; i++)
-                    FlatButton.icon(
-                      padding: EdgeInsets.all(0),
-                      onPressed: () {
-                        rainWaterDataProvider.rainWater.sources
-                            .remove(sources[i].name);
-                        if (!sources[i].selected) {
-                          rainWaterDataProvider.rainWater.sources
-                              .add(sources[i].name);
-                        }
-                        setState(() {
-                          sources[i].selected = !sources[i].selected;
-                        });
-                      },
-                      icon: sources[i].selected
-                          ? Icon(Icons.check_box)
-                          : Icon(Icons.check_box_outline_blank),
-                      label: Text(sources[i].name),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Checkbox(
+                            visualDensity: VisualDensity.compact,
+                            value: sources[i].selected,
+                            activeColor: Colors.black,
+                            onChanged: (value) {
+                              if (value) {
+                                rainWaterDataProvider.rainWater.sources
+                                    .add(sources[i].name);
+                              } else {
+                                rainWaterDataProvider.rainWater.sources
+                                    .remove(sources[i].name);
+                              }
+                              setState(() {
+                                sources[i].selected = !sources[i].selected;
+                              });
+                            }),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text('${sources[i].name}'),
+                      ],
                     ),
                   SizedBox(
                     height: 10,
@@ -229,13 +237,6 @@ class RainWaterRouteState extends State<RainWaterRoute> {
                         textColor: Colors.white,
                         child: Text('Next'),
                         onPressed: () {
-                          // Navigator.push(
-                          //   context,
-                          //   CupertinoPageRoute(
-                          //     builder: (context) => _RainWaterForm2Route(),
-                          //   ),
-                          // );
-                          // return;
                           if (_formKey.currentState.validate()) {
                             if (roofType != null &&
                                 demandBeingMet != null &&
@@ -244,6 +245,9 @@ class RainWaterRouteState extends State<RainWaterRoute> {
                                 context,
                                 CupertinoPageRoute(
                                   builder: (context) => _RainWaterForm2Route(),
+                                  settings: RouteSettings(
+                                    name: _RainWaterForm2Route.name,
+                                  ),
                                 ),
                               );
                             } else {
@@ -269,6 +273,7 @@ class RainWaterRouteState extends State<RainWaterRoute> {
 }
 
 class _RainWaterForm2Route extends StatefulWidget {
+  static final String name = "_RainWaterForm2Route";
   @override
   State<StatefulWidget> createState() {
     return _RainWaterForm2RouteState();
@@ -444,6 +449,9 @@ class _RainWaterForm2RouteState extends State<_RainWaterForm2Route> {
                                 context,
                                 CupertinoPageRoute(
                                   builder: (context) => ThankYouRoute(),
+                                  settings: RouteSettings(
+                                    name: ThankYouRoute.name,
+                                  ),
                                 ),
                                 (route) {
                                   print(
@@ -479,6 +487,7 @@ class _RainWaterForm2RouteState extends State<_RainWaterForm2Route> {
 }
 
 class ThankYouRoute extends StatelessWidget {
+  static final String name = "ThankYouRoute";
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;

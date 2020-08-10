@@ -59,12 +59,16 @@ class CompletedContractWidget extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => ServicingOptionRoute(
-                      contract: contract,
-                    ),
-                  ));
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => ServicingOptionRoute(
+                    contract: contract,
+                  ),
+                  settings: RouteSettings(
+                    name: ServicingOptionRoute.name,
+                  ),
+                ),
+              );
             },
             child: Row(
               children: [
@@ -73,6 +77,9 @@ class CompletedContractWidget extends StatelessWidget {
                     Navigator.of(context).push(CupertinoPageRoute(
                       builder: (context) => CompletedJobDetailsRoute(
                         contract: contract,
+                      ),
+                      settings: RouteSettings(
+                        name: CompletedJobDetailsRoute.name,
                       ),
                     ));
                   },
@@ -174,6 +181,9 @@ class CanceledContractWidget extends StatelessWidget {
                     builder: (context) => ServicingOptionRoute(
                       contract: contract,
                     ),
+                    settings: RouteSettings(
+                      name: ServicingOptionRoute.name,
+                    ),
                   ));
             },
             child: InkWell(
@@ -181,6 +191,9 @@ class CanceledContractWidget extends StatelessWidget {
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) => CanceledJobDetailsRoute(
                     contract: contract,
+                  ),
+                  settings: RouteSettings(
+                    name: CanceledJobDetailsRoute.name,
                   ),
                 ));
               },

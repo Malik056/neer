@@ -42,14 +42,19 @@ class OpenRequestWidget extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              CupertinoPageRoute(builder: (ctx) {
-                return ActionCenterRoute(
-                  quoteRequests: globals.quotes
-                      .where((element) =>
-                          element.requestId == openRequest.requestId)
-                      .toList(),
-                );
-              }),
+              CupertinoPageRoute(
+                builder: (ctx) {
+                  return ActionCenterRoute(
+                    quoteRequests: globals.quotes
+                        .where((element) =>
+                            element.requestId == openRequest.requestId)
+                        .toList(),
+                  );
+                },
+                settings: RouteSettings(
+                  name: ActionCenterRoute.name,
+                ),
+              ),
             );
           },
         ),

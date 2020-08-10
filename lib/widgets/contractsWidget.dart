@@ -64,12 +64,16 @@ class ContractWidget extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => ServicingOptionRoute(
-                      contract: contract,
-                    ),
-                  ));
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => ServicingOptionRoute(
+                    contract: contract,
+                  ),
+                  settings: RouteSettings(
+                    name: ServicingOptionRoute.name,
+                  ),
+                ),
+              );
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
