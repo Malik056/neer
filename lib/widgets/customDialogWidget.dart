@@ -832,26 +832,33 @@ class CodeVerificationDialog extends StatelessWidget {
                             setState(() {
                               isLoading = true;
                             });
-                            bool result =
-                                await globals.phoneAuthProvider.verify(text);
-                            if (result) {
-                              if (globals.user.phoneNumber != phoneNumber) {
-                                result = await globals.phoneAuthProvider
-                                    .updateCurrentUserCredentials();
-                                if (result == null || result == false) {
-                                  showError('Bad OTP');
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  return;
+                            try {
+                              bool result =
+                                  await globals.phoneAuthProvider.verify(text);
+                              if (result) {
+                                if (globals.user.phoneNumber != phoneNumber) {
+                                  result = await globals.phoneAuthProvider
+                                      .updateCurrentUserCredentials();
+                                  if (result == null || result == false) {
+                                    showError('Bad OTP');
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    return;
+                                  }
                                 }
+                                Navigator.pop(context, true);
+                              } else {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                showError('Bad OTP');
                               }
-                              Navigator.pop(context, true);
-                            } else {
+                            } catch (ex) {
+                              showError('$ex');
                               setState(() {
                                 isLoading = false;
                               });
-                              showError('Bad OTP');
                             }
                           },
                           textFieldAlignment: MainAxisAlignment.spaceEvenly,
@@ -894,6 +901,7 @@ class CodeVerificationDialog extends StatelessWidget {
                                   verificationCompleted: (credentials) {
                                     globals.phoneAuthProvider.credentials =
                                         credentials;
+                                    Navigator.pop(context, true);
                                   },
                                   verificationFailed: null,
                                   codeSent: (verificationId,

@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:neer/bloc/phoneAuthBloc.dart';
+import 'package:neer/bloc/waitTimeBloc.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/globals/methods.dart' as methods;
 import 'package:neer/models/user.dart';
@@ -149,13 +151,6 @@ class EditProfileRoute extends StatelessWidget {
                       alignment: Alignment.center,
                       child: RaisedButton(
                         onPressed: () async {
-                          // showDialog<bool>(
-                          //   context: context,
-                          //   child: CodeVerificationDialog(
-                          //     phoneNumber: globals.user.phoneNumber,
-                          //   ),
-                          // );
-                          // return;
                           if (formState.currentState.validate()) {
                             if (globals.waitingTimeBloc.state > 0) {
                               setState(() {
@@ -169,101 +164,64 @@ class EditProfileRoute extends StatelessWidget {
                                   isLoading = false;
                                 });
                               }
-                              return;
                             } else {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              bool result =
+                                  await showVerificationDialog(context);
+                              if (result == null) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              } else if (result) {
+                                await updateUser(context);
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
                               FirebaseAuth.instance.verifyPhoneNumber(
-                                  phoneNumber: tempUser.phoneNumber,
-                                  timeout: Duration(milliseconds: 1),
-                                  verificationCompleted: (credentials) async {
-                                    globals.phoneAuthProvider.credentials =
-                                        credentials;
-                                    await updateUser(context);
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                  },
-                                  verificationFailed: (err) {
-                                    methods.showInSnackbar(
-                                      err.message,
-                                      context,
-                                    );
-                                  },
-                                  codeSent: (verificationId, [forceResend]) {
-                                    globals.phoneAuthProvider.verificationId =
-                                        verificationId;
-                                  },
-                                  codeAutoRetrievalTimeout:
-                                      (verificationId) async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    globals.phoneAuthProvider.verificationId =
-                                        verificationId;
-                                    bool result =
-                                        await showVerificationDialog(context);
-                                    if (result == null) {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      return;
-                                    } else if (result) {
-                                      await updateUser(context);
-                                    }
-                                    setState(() {
-                                      isLoading = false;
-                                    });
+                                phoneNumber: tempUser.phoneNumber,
+                                timeout: Duration(seconds: 20),
+                                verificationCompleted: (credentials) async {
+                                  globals.phoneAuthProvider.credentials =
+                                      credentials;
+                                  await updateUser(context);
+                                  globals.phoneAuthProvider.phoneAuthBloc
+                                      .add(PhoneAuthState.authenticated);
+                                  setState(() {
+                                    isLoading = false;
                                   });
-                              // globals.phoneAuthProvider.sendCode(
-                              //   phoneNumber: globals.user.phoneNumber,
-                              //   timeout: 1,
-                              //   onCodeSent: () async {
-                              //     print('Code Sent');
-                              //     globals.waitingTimeBloc
-                              //         .add(StopWatchEvents.start);
-                              //     bool result =
-                              //         await showVerificationDialog(context);
-                              //     if (result != null && result) {
-                              //       updateUser(context);
-                              //     }
-                              //   },
-                              //   onVerificationCompleted: () async {
-                              //     try {
-                              //       final authResult = await FirebaseAuth
-                              //           .instance
-                              //           .signInWithCredential(globals
-                              //               .phoneAuthProvider.credentials);
-                              //       if (authResult?.user == null) {
-                              //         bool result =
-                              //             await showVerificationDialog(context);
-                              //         if (result ?? false) {
-                              //           updateUser(context);
-                              //         } else {
-                              //           return;
-                              //         }
-                              //       } else {
-                              //         updateUser(context);
-                              //       }
-                              //     } catch (ex) {
-                              //       print(ex);
-                              //       bool result =
-                              //           await showVerificationDialog(context);
-                              //       if (result ?? false) {
-                              //         updateUser(context);
-                              //       } else {
-                              //         return;
-                              //       }
-                              //       return;
-                              //     }
-                              //     print('complete');
-                              //   },
-                              //   codeAutoRetrievalTimeout: () {
-                              //     print('timeout');
-                              //   },
-                              //   verificationFailed: (err) {
-                              //     print('$err');
-                              //     methods.showInSnackbar(err, context);
-                              //   },
-                              // );
+                                },
+                                verificationFailed: (err) {
+                                  globals.phoneAuthProvider.phoneAuthBloc
+                                      .add(PhoneAuthState.authenticationFailed);
+                                  methods.showInSnackbar(
+                                    err.message,
+                                    context,
+                                  );
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                },
+                                codeSent: (verificationId, [forceResend]) {
+                                  globals.phoneAuthProvider.phoneAuthBloc
+                                      .add(PhoneAuthState.codeSent);
+                                  globals.waitingTimeBloc.add(
+                                    StopWatchEvents.start,
+                                  );
+                                  globals.phoneAuthProvider.verificationId =
+                                      verificationId;
+                                },
+                                codeAutoRetrievalTimeout:
+                                    (verificationId) async {
+                                  // setState(() {
+                                  //   isLoading = true;
+                                  // });
+                                  globals.phoneAuthProvider.verificationId =
+                                      verificationId;
+                                },
+                              );
                             }
                           }
                         },

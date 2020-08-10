@@ -141,17 +141,35 @@ class PhoneNumberAuthRoute extends StatelessWidget {
                           setState(() {
                             isLoading = true;
                           });
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) {
+                                return PhoneVerificationCodeRoute();
+                              },
+                              settings: RouteSettings(
+                                name: PhoneVerificationCodeRoute.name,
+                              ),
+                            ),
+                          );
                           FirebaseAuth.instance.verifyPhoneNumber(
                             phoneNumber: downValue.value +
                                 _phoneNumberController.text.trim(),
                             timeout: Duration(seconds: 10),
                             verificationCompleted: (credentials) async {
+                              globals.phoneAuthProvider.phoneAuthBloc
+                                  .add(PhoneAuthState.authenticated);
                               globals.phoneAuthProvider.credentials =
                                   credentials;
                               globals.phoneAuthProvider.phoneAuthBloc
                                   .add(PhoneAuthState.authenticated);
+                              setState(() {
+                                isLoading = false;
+                              });
                             },
                             verificationFailed: (err) {
+                              globals.phoneAuthProvider.phoneAuthBloc
+                                  .add(PhoneAuthState.authenticationFailed);
                               globals.phoneAuthProvider.phoneAuthBloc
                                   .add(PhoneAuthState.authenticationFailed);
                               setState(() {
@@ -160,6 +178,8 @@ class PhoneNumberAuthRoute extends StatelessWidget {
                               showInSnackbar(err.message, context);
                             },
                             codeSent: (verId, [forceResendingCode]) {
+                              globals.phoneAuthProvider.phoneAuthBloc
+                                  .add(PhoneAuthState.codeSent);
                               globals.phoneAuthProvider.verificationId = verId;
                               globals.phoneAuthProvider.phoneAuthBloc.add(
                                 PhoneAuthState.codeSent,
@@ -170,16 +190,6 @@ class PhoneNumberAuthRoute extends StatelessWidget {
                               globals.phoneAuthProvider.phoneNumber =
                                   downValue.value +
                                       _phoneNumberController.text.trim();
-                              Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) {
-                                      return PhoneVerificationCodeRoute();
-                                    },
-                                    settings: RouteSettings(
-                                      name: PhoneVerificationCodeRoute.name,
-                                    ),
-                                  ));
                               showInSnackbar('Code Sent', context);
                             },
                             codeAutoRetrievalTimeout: (verificationId) {},

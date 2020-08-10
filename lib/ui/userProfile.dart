@@ -4,12 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/globals/methods.dart' as methods;
-import 'package:neer/ui/actionCenter.dart';
 import 'package:neer/ui/editProfile.dart';
 import 'package:neer/ui/feedback.dart';
 import 'package:neer/ui/helpCenter.dart';
 import 'package:neer/ui/login_signup.dart';
-import 'package:neer/widgets/actionCenterRequestWidget.dart';
 
 class UserProfile extends StatelessWidget {
   @override
@@ -44,7 +42,7 @@ class UserProfile extends StatelessWidget {
                             height: 25,
                           ),
                           Text(
-                            globals.user.name,
+                            globals.user?.name ?? '',
                             style: textTheme.bodyText2,
                           ),
                           SizedBox(
@@ -57,11 +55,11 @@ class UserProfile extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      globals.user.email,
+                                      globals.user?.email ?? '',
                                       style: textTheme.bodyText2,
                                     ),
                                     Text(
-                                      globals.user.phoneNumber,
+                                      globals.user?.phoneNumber ?? '',
                                       style: textTheme.bodyText2,
                                     ),
                                   ],
@@ -175,6 +173,7 @@ class UserProfile extends StatelessWidget {
                           methods.showInSnackbar('$error', context);
                         }
                         globals.user = null;
+                        globals.openRequestBloc.close();
                         Navigator.of(context).pushAndRemoveUntil(
                             CupertinoPageRoute(
                               builder: (context) => PhoneNumberAuthRoute(),

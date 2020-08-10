@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:neer/bloc/waitTimeBloc.dart';
 import 'package:neer/providers/authProvider.dart';
 import 'package:neer/providers/rainwaterDataProvider.dart';
-import 'package:neer/ui/feedback.dart';
 import 'package:neer/ui/firstPageDecider.dart';
-import 'package:neer/ui/settings.dart';
 
 import 'bloc/connectivityBloc.dart';
 import 'globals/constants.dart' as globals;

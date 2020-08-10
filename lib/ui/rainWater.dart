@@ -1,24 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:neer/globals/constants.dart';
+import 'package:neer/globals/methods.dart' as methods;
+import 'package:neer/models/openRequest.dart';
+import 'package:neer/models/serviceType.dart';
 import 'package:neer/ui/homeScreen.dart';
 import 'package:neer/widgets/serviceProviderWidget.dart';
-
-showInSnackbar(String text, BuildContext ctx, {Color color = Colors.black}) {
-  Scaffold.of(ctx).showSnackBar(
-    SnackBar(
-      content: Text(
-        text,
-        style: Theme.of(ctx).textTheme.subtitle2.copyWith(
-              color:
-                  color.computeLuminance() == 0 ? Colors.white : Colors.black,
-            ),
-      ),
-      backgroundColor: color,
-    ),
-  );
-}
 
 class RainWaterRoute extends StatefulWidget {
   static String routeName = "RainWaterRoute";
@@ -251,7 +241,7 @@ class RainWaterRouteState extends State<RainWaterRoute> {
                                 ),
                               );
                             } else {
-                              showInSnackbar(
+                              methods.showInSnackbar(
                                 'Error: Missing some information',
                                 context,
                                 color: Colors.red,
@@ -288,6 +278,7 @@ class _RainWaterForm2RouteState extends State<_RainWaterForm2Route> {
     _WaterSourcesProvider('Bubbletop', false),
   ];
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   String availableWells;
 
@@ -303,180 +294,214 @@ class _RainWaterForm2RouteState extends State<_RainWaterForm2Route> {
             right: 10,
             top: MediaQuery.of(context).padding.top + 25,
           ),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Rain Water Harvesting",
-                    style: textTheme.headline5
-                        .copyWith(fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Text(
-                    "And we're almost done",
-                    style: textTheme.headline6.copyWith(
-                      fontWeight: FontWeight.w400,
+          child: ModalProgressHUD(
+            inAsyncCall: isLoading,
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Rain Water Harvesting",
+                      style: textTheme.headline5
+                          .copyWith(fontWeight: FontWeight.w400),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    validator: (text) {
-                      if (text?.isEmpty ?? true) {
-                        return "This field is required";
-                      }
-                      rainWaterDataProvider.rainWater.qualityOfWaterPerDay =
-                          text;
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Quantity of water required a day",
-                      border: UnderlineInputBorder(),
+                    SizedBox(
+                      height: 25,
                     ),
-                  ),
-                  // Row(
-                  //   children: <Widget>[
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Available Wells:",
-                    style: textTheme.subtitle2,
-                  ),
-                  // SizedBox(
-                  //   width: 40,
-                  // ),
-                  RadioGroup<String>.builder(
-                    horizontalAlignment: MainAxisAlignment.spaceEvenly,
-                    direction: Axis.horizontal,
-                    groupValue: availableWells,
-                    onChanged: (value) {
-                      rainWaterDataProvider.rainWater.availableWells = value;
-                      setState(() {
-                        availableWells = value;
-                      });
-                    },
-                    items: ['Open', 'Bore', 'Both'],
-                    itemBuilder: (value) => RadioButtonBuilder(
-                      value,
-                      textPosition: RadioButtonTextPosition.right,
-                    ),
-                    //   ),
-                    // ],
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    validator: (text) {
-                      if (text?.isEmpty ?? true) {
-                        return "This field is required";
-                      }
-                      rainWaterDataProvider.rainWater.countAndDepthOfWells =
-                          text;
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      hintText: "Count and depth of above mentioned wells",
-                      border: UnderlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    validator: (text) {
-                      if (text?.isEmpty ?? true) {
-                        return "This field is required";
-                      }
-                      rainWaterDataProvider
-                          .rainWater.noOfRainWaterDischargePipes = text;
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      hintText:
-                          "No. of rain water discharge piped from the roof",
-                      border: UnderlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'Other Information you might want us to know?',
-                    style: textTheme.subtitle2,
-                  ),
-                  TextFormField(
-                    validator: (text) {
-                      rainWaterDataProvider.rainWater.otherInformation =
-                          (text ?? '');
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
-                      counter: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.info,
-                            size: 12,
-                          ),
-                          Text('Useful Information')
-                        ],
+                    Text(
+                      "And we're almost done",
+                      style: textTheme.headline6.copyWith(
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                    minLines: 4,
-                    maxLines: 4,
-                  ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    TextFormField(
+                      validator: (text) {
+                        if (text?.isEmpty ?? true) {
+                          return "This field is required";
+                        }
+                        rainWaterDataProvider.rainWater.qualityOfWaterPerDay =
+                            text;
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Quantity of water required a day",
+                        border: UnderlineInputBorder(),
+                      ),
+                    ),
+                    // Row(
+                    //   children: <Widget>[
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Available Wells:",
+                      style: textTheme.subtitle2,
+                    ),
+                    // SizedBox(
+                    //   width: 40,
+                    // ),
+                    RadioGroup<String>.builder(
+                      horizontalAlignment: MainAxisAlignment.spaceEvenly,
+                      direction: Axis.horizontal,
+                      groupValue: availableWells,
+                      onChanged: (value) {
+                        rainWaterDataProvider.rainWater.availableWells = value;
+                        setState(() {
+                          availableWells = value;
+                        });
+                      },
+                      items: ['Open', 'Bore', 'Both'],
+                      itemBuilder: (value) => RadioButtonBuilder(
+                        value,
+                        textPosition: RadioButtonTextPosition.right,
+                      ),
+                      //   ),
+                      // ],
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      validator: (text) {
+                        if (text?.isEmpty ?? true) {
+                          return "This field is required";
+                        }
+                        rainWaterDataProvider.rainWater.countAndDepthOfWells =
+                            text;
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: "Count and depth of above mentioned wells",
+                        border: UnderlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      validator: (text) {
+                        if (text?.isEmpty ?? true) {
+                          return "This field is required";
+                        }
+                        rainWaterDataProvider
+                            .rainWater.noOfRainWaterDischargePipes = text;
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText:
+                            "No. of rain water discharge piped from the roof",
+                        border: UnderlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Other Information you might want us to know?',
+                      style: textTheme.subtitle2,
+                    ),
+                    TextFormField(
+                      validator: (text) {
+                        rainWaterDataProvider.rainWater.otherInformation =
+                            (text ?? '');
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        border: UnderlineInputBorder(),
+                        counter: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.info,
+                              size: 12,
+                            ),
+                            Text('Useful Information')
+                          ],
+                        ),
+                      ),
+                      minLines: 4,
+                      maxLines: 4,
+                    ),
 
-                  SizedBox(height: 60),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      width: 160,
-                      height: 44,
-                      child: RaisedButton(
-                        color: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        onPressed: () {
-                          if (_formKey.currentState.validate()) {
-                            if (availableWells != null) {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => ThankYouRoute(),
-                                  settings: RouteSettings(
-                                    name: ThankYouRoute.name,
-                                  ),
-                                ),
-                                (route) {
-                                  print(
-                                      'RouteSettings: ${route.settings ?? ''}');
-                                  print(
-                                      'RouteName: ${route.settings.name ?? ''}');
-                                  return route.settings.name ==
-                                      HomeScreenRoute.name;
-                                },
-                              );
-                            } else {
-                              showInSnackbar(
-                                  'Error: Missing Information', context,
-                                  color: Colors.red);
+                    SizedBox(height: 60),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        width: 160,
+                        height: 44,
+                        child: RaisedButton(
+                          color: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState.validate()) {
+                              if (availableWells != null) {
+                                int now = DateTime.now()
+                                    .toUtc()
+                                    .millisecondsSinceEpoch;
+                                OpenRequest openRequest = OpenRequest(
+                                  initializeDate: now,
+                                  requestData: rainWaterDataProvider.rainWater,
+                                  serviceType: ServiceTypes.rainWaterHarvest,
+                                  userId: user.uid,
+                                );
+                                await Firestore.instance
+                                    .collection('requests')
+                                    .add(
+                                      openRequest.toMap(),
+                                    )
+                                    .then(
+                                  (value) {
+                                    // openRequest.requestId = value.documentID;
+                                    // openRequests.add(openRequest);
+                                    rainWaterDataProvider.reset();
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) => ThankYouRoute(
+                                            requestId: value.documentID),
+                                        settings: RouteSettings(
+                                          name: ThankYouRoute.name,
+                                        ),
+                                      ),
+                                      (route) {
+                                        print(
+                                            'RouteSettings: ${route.settings ?? ''}');
+                                        print(
+                                            'RouteName: ${route.settings.name ?? ''}');
+                                        return route.settings.name ==
+                                            HomeScreenRoute.name;
+                                      },
+                                    );
+                                  },
+                                ).catchError(
+                                  (error) {
+                                    print(error);
+                                    methods.showInSnackbar(error, context);
+                                    isLoading = false;
+                                  },
+                                );
+                              } else {
+                                methods.showInSnackbar(
+                                    'Error: Missing Information', context,
+                                    color: Colors.red);
+                              }
                             }
-                          }
-                        },
-                        textColor: Colors.white,
-                        child: Text(
-                          'Submit',
+                          },
+                          textColor: Colors.white,
+                          child: Text(
+                            'Submit',
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -488,6 +513,9 @@ class _RainWaterForm2RouteState extends State<_RainWaterForm2Route> {
 
 class ThankYouRoute extends StatelessWidget {
   static final String name = "ThankYouRoute";
+  final String requestId;
+
+  const ThankYouRoute({Key key, this.requestId}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;

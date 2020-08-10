@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neer/bloc/openRequestsBloc.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/ui/jobRoute.dart';
 import 'package:neer/ui/rainWater.dart';
@@ -17,6 +18,14 @@ class HomeScreenRoute extends StatefulWidget {
 class HomeScreenRouteState extends State<HomeScreenRoute> {
   int selectedIndex = 0;
   bool exitApp = false;
+  @override
+  void initState() {
+    if (globals.openRequestBloc == null) {
+      globals.openRequestBloc = OpenRequestBloc();
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // TextTheme textTheme = Theme.of(context).textTheme;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neer/bloc/connectivityBloc.dart';
+import 'package:neer/bloc/openRequestsBloc.dart';
 import 'package:neer/bloc/waitTimeBloc.dart';
 import 'package:neer/models/contract.dart';
 import 'package:neer/models/milestone.dart';
@@ -84,6 +85,8 @@ List<ServiceProviderModel> serviceProviders = [
     id: "3",
   ),
 ];
+OpenRequestBloc openRequestBloc;
+
 List<OpenRequest> openRequests = [
   OpenRequest(
     requestId: '1XXXXXXXXXX',

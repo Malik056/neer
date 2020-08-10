@@ -1,13 +1,21 @@
 import 'dart:convert';
+import 'package:neer/models/rainWater.dart';
+import 'package:neer/models/requestData.dart';
+import 'package:neer/models/serviceType.dart';
 
 class OpenRequest {
-  final String requestId;
+  String requestId;
   final int initializeDate;
+  final String userId;
   final String serviceType;
+  final RequestData requestData;
+
   OpenRequest({
     this.requestId,
     this.initializeDate,
     this.serviceType,
+    this.userId,
+    this.requestData,
   });
 
   Map<String, dynamic> toMap() {
@@ -15,6 +23,8 @@ class OpenRequest {
       'requestId': requestId,
       'initializeDate': initializeDate,
       'serviceType': serviceType.toString(),
+      'requestData': requestData.toMap(),
+      'userId': userId,
     };
   }
 
@@ -25,6 +35,10 @@ class OpenRequest {
       requestId: map['requestId'],
       initializeDate: map['initializeDate'],
       serviceType: map['serviceType'],
+      requestData: map['serviceType'] == ServiceTypes.rainWaterHarvest
+          ? RainWater.fromMap(map['requestData'])
+          : null,
+      userId: map['userId'],
     );
   }
 

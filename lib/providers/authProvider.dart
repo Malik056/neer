@@ -55,10 +55,12 @@ class MyPhoneAuthProvider {
         }
       },
       verificationFailed: (authException) {
+        phoneAuthBloc.add(PhoneAuthState.authenticationFailed);
         print(authException.toString());
         verificationFailed(authException.message);
       },
       codeSent: (verificationId, [number]) {
+        phoneAuthBloc.add(PhoneAuthState.codeSent);
         this.verificationId = verificationId;
         globals.waitingTimeBloc.add(StopWatchEvents.start);
         onCodeSent();
@@ -122,7 +124,7 @@ class MyPhoneAuthProvider {
         return false;
     } catch (trace) {
       print(trace);
-      return false;
+      throw trace;
     }
   }
 

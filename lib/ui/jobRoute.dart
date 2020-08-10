@@ -2,6 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/models/contract.dart';
+import 'package:neer/models/openRequest.dart';
 import 'package:neer/widgets/completedContractsWidget.dart';
 import 'package:neer/widgets/contractsWidget.dart';
 import 'package:neer/widgets/openRequestWidget.dart';
@@ -65,23 +66,33 @@ class JobRoute extends StatelessWidget {
                           maxHeight: 300,
                         ),
                         child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: List.generate(
-                              globals.openRequests.length,
-                              (index) => Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  OpenRequestWidget(
-                                    openRequest: globals.openRequests[index],
+                          child: StreamBuilder<List<OpenRequest>>(
+                              stream: globals.openRequestBloc,
+                              initialData: [],
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return SizedBox();
+                                }
+                                return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: List.generate(
+                                    snapshot.data.length,
+                                    (index) => Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        OpenRequestWidget(
+                                          openRequest: snapshot.data[index],
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                );
+                              }),
                         ),
                       ),
                     ),
