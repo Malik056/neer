@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:neer/bloc/canceledRequestBloc.dart';
 import 'package:neer/bloc/openRequestsBloc.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/ui/jobRoute.dart';
@@ -22,6 +23,9 @@ class HomeScreenRouteState extends State<HomeScreenRoute> {
   void initState() {
     if (globals.openRequestBloc == null) {
       globals.openRequestBloc = OpenRequestBloc();
+    }
+    if (globals.canceledRequestBloc == null) {
+      globals.canceledRequestBloc = CanceledRequestBloc();
     }
     super.initState();
   }
@@ -95,106 +99,127 @@ class HomeScreenWidget extends StatelessWidget {
             bottom: 20,
             left: 20,
             right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text.rich(
-              TextSpan(
-                text: 'Welcome, ',
-                children: [
-                  TextSpan(
-                    text: '${globals.user.name.split(' ')[0]}!',
-                    style: Theme.of(context).textTheme.headline5.copyWith(
-                          fontWeight: FontWeight.w200,
-                          color: Colors.grey,
-                        ),
-                  )
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text.rich(
+                TextSpan(
+                  text: 'Welcome, ',
+                  children: [
+                    TextSpan(
+                      text: '${globals.user.name.split(' ')[0]}!',
+                      style: Theme.of(context).textTheme.headline5.copyWith(
+                            fontWeight: FontWeight.w200,
+                            color: Colors.grey,
+                          ),
+                    )
+                  ],
+                ),
+                textAlign: TextAlign.start,
+                style: Theme.of(context).textTheme.headline5,
               ),
-              textAlign: TextAlign.start,
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                'We Are NEER!',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.subtitle1.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+              SizedBox(
+                height: 50,
               ),
-            ),
-            SizedBox(
-              height: 2,
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text('Your One-Step shop for all your water needs',
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'We Are NEER!',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.caption
-                  // .copyWith(
-                  //       fontWeight: FontWeight.w200,
-                  // ),
-                  ),
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                'And we\'re glad you\'re here!',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.subtitle1.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
-              ),
-            ),
-            SizedBox(
-              height: 2,
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                  'We appreciate your initiative contributing to the community',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.caption
-                  // .copyWith(
-                  //       fontWeight: FontWeight.w200,
-                  // ),
-                  ),
-            ),
-            Spacer(),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                "Services Available",
-                textAlign: TextAlign.center,
-                style: textTheme.headline5.copyWith(
-                  fontWeight: FontWeight.w500,
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        fontWeight: FontWeight.w400,
+                      ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            Row(
-              children: <Widget>[
-                Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => RainWaterRoute(),
-                        settings: RouteSettings(name: RainWaterRoute.routeName),
+              SizedBox(
+                height: 2,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Text('Your One-Step shop for all your water needs',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.caption
+                    // .copyWith(
+                    //       fontWeight: FontWeight.w200,
+                    // ),
+                    ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'And we\'re glad you\'re here!',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        fontWeight: FontWeight.w400,
                       ),
-                    );
-                  },
-                  child: Column(
+                ),
+              ),
+              SizedBox(
+                height: 2,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                    'We appreciate your initiative contributing to the community',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.caption
+                    // .copyWith(
+                    //       fontWeight: FontWeight.w200,
+                    // ),
+                    ),
+              ),
+              SizedBox(
+                height: 100,
+              ),
+              // Spacer(),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Services Available",
+                  textAlign: TextAlign.center,
+                  style: textTheme.headline5.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: <Widget>[
+                  Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => RainWaterRoute(),
+                          settings:
+                              RouteSettings(name: RainWaterRoute.routeName),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.border_all,
+                          size: 50,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text('Rain Water'),
+                      ],
+                    ),
+                  ),
+                  Spacer(),
+                  Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -205,70 +230,55 @@ class HomeScreenWidget extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-                      Text('Rain Water'),
+                      Text('Water Quality'),
                     ],
                   ),
-                ),
-                Spacer(),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.border_all,
-                      size: 50,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text('Water Quality'),
-                  ],
-                ),
-                Spacer(),
-              ],
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            Row(
-              children: <Widget>[
-                Spacer(),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.border_all,
-                      size: 50,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text('Grey Water'),
-                  ],
-                ),
-                Spacer(),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.border_all,
-                      size: 50,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text('Waste Water'),
-                  ],
-                ),
-                Spacer(),
-              ],
-            ),
-            SizedBox(
-              height: 100,
-            ),
-          ],
+                  Spacer(),
+                ],
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Row(
+                children: <Widget>[
+                  Spacer(),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.border_all,
+                        size: 50,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text('Grey Water'),
+                    ],
+                  ),
+                  Spacer(),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.border_all,
+                        size: 50,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text('Waste Water'),
+                    ],
+                  ),
+                  Spacer(),
+                ],
+              ),
+              SizedBox(
+                height: 100,
+              ),
+            ],
+          ),
         ),
       ),
     );

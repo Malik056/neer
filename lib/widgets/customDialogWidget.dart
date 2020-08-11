@@ -34,18 +34,18 @@ class CancelJobRequestDialogWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Dialog(
-      elevation: 1,
+      elevation: 0,
       insetPadding: EdgeInsets.all(0),
-      shape: Border(
-        top: BorderSide(
-          color: Colors.black,
-          width: 2,
-        ),
-        bottom: BorderSide(
-          color: Colors.black,
-          width: 2,
-        ),
+      shape: MyCustomShapeBorder(
+        4,
+        Colors.black,
+        0,
       ),
+      // bottom: BorderSide(
+      //   color: Colors.black,
+      //   width: 2,
+      // ),
+      // ),
       child: Material(
         child: Container(
           margin: EdgeInsets.only(top: 2, bottom: 10, left: 20, right: 20),
@@ -64,7 +64,7 @@ class CancelJobRequestDialogWidget extends StatelessWidget {
                     color: Colors.black,
                     icon: Icon(Icons.cancel),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      // Navigator.of(context).pop();
                       onClose();
                     },
                   ),
@@ -86,8 +86,8 @@ class CancelJobRequestDialogWidget extends StatelessWidget {
                 alignment: Alignment.center,
                 child: FlatButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
                     onDone();
+                    // Navigator.of(context).pop();
                   },
                   textColor: Colors.red,
                   child: Text(

@@ -45,6 +45,7 @@ class OpenRequestWidget extends StatelessWidget {
               CupertinoPageRoute(
                 builder: (ctx) {
                   return ActionCenterRoute(
+                    request: openRequest,
                     quoteRequests: globals.quotes
                         .where((element) =>
                             element.requestId == openRequest.requestId)

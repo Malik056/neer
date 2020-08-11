@@ -6,6 +6,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:neer/globals/constants.dart';
 import 'package:neer/globals/methods.dart' as methods;
 import 'package:neer/models/openRequest.dart';
+import 'package:neer/models/requestStatus.dart';
 import 'package:neer/models/serviceType.dart';
 import 'package:neer/ui/homeScreen.dart';
 import 'package:neer/widgets/serviceProviderWidget.dart';
@@ -445,6 +446,7 @@ class _RainWaterForm2RouteState extends State<_RainWaterForm2Route> {
                                   initializeDate: now,
                                   requestData: rainWaterDataProvider.rainWater,
                                   serviceType: ServiceTypes.rainWaterHarvest,
+                                  status: RequestStatus.active,
                                   userId: user.uid,
                                 );
                                 await Firestore.instance
@@ -564,7 +566,7 @@ class ThankYouRoute extends StatelessWidget {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "You Job Reference ID - XXXXXXXXXX",
+                  "You Job Reference ID - $requestId",
                   textAlign: TextAlign.center,
                   style: textTheme.headline6
                       .copyWith(fontWeight: FontWeight.normal),

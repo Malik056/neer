@@ -9,8 +9,10 @@ class OpenRequest {
   final String userId;
   final String serviceType;
   final RequestData requestData;
+  final String status;
 
   OpenRequest({
+    this.status = "Active",
     this.requestId,
     this.initializeDate,
     this.serviceType,
@@ -25,6 +27,7 @@ class OpenRequest {
       'serviceType': serviceType.toString(),
       'requestData': requestData.toMap(),
       'userId': userId,
+      'status': status,
     };
   }
 
@@ -32,6 +35,7 @@ class OpenRequest {
     if (map == null) return null;
 
     return OpenRequest(
+      status: map['status'],
       requestId: map['requestId'],
       initializeDate: map['initializeDate'],
       serviceType: map['serviceType'],
@@ -41,13 +45,4 @@ class OpenRequest {
       userId: map['userId'],
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory OpenRequest.fromJson(String source) =>
-      OpenRequest.fromMap(json.decode(source));
-
-  @override
-  String toString() =>
-      'OpenRequest(requestId: $requestId, initializeDate: $initializeDate, serviceType: $serviceType)';
 }

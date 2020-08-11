@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neer/bloc/canceledRequestBloc.dart';
 import 'package:neer/bloc/connectivityBloc.dart';
 import 'package:neer/bloc/openRequestsBloc.dart';
 import 'package:neer/bloc/waitTimeBloc.dart';
@@ -86,6 +87,7 @@ List<ServiceProviderModel> serviceProviders = [
   ),
 ];
 OpenRequestBloc openRequestBloc;
+CanceledRequestBloc canceledRequestBloc;
 
 List<OpenRequest> openRequests = [
   OpenRequest(

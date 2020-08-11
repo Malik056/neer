@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:neer/globals/constants.dart';
 import 'package:neer/models/openRequest.dart';
+import 'package:neer/models/requestStatus.dart';
 
 class OpenRequestBloc extends Bloc<QuerySnapshot, List<OpenRequest>> {
   StreamSubscription<QuerySnapshot> _subscription;
@@ -11,6 +12,10 @@ class OpenRequestBloc extends Bloc<QuerySnapshot, List<OpenRequest>> {
     _subscription = Firestore.instance
         .collection('requests')
         .where('userId', isEqualTo: user.uid)
+        .where(
+          'status',
+          isEqualTo: RequestStatus.active,
+        )
         .orderBy('initializeDate', descending: true)
         .snapshots()
         .listen((event) {
@@ -22,7 +27,12 @@ class OpenRequestBloc extends Bloc<QuerySnapshot, List<OpenRequest>> {
   Stream<List<OpenRequest>> mapEventToState(QuerySnapshot event) async* {
     yield event.documents
         .map(
-          (e) => OpenRequest.fromMap(e.data),
+          (e) => OpenRequest.fromMap(
+            e.data
+              ..update('requestId', (value) => e.documentID, ifAbsent: () {
+                return e.documentID;
+              }),
+          ),
         )
         .toList();
   }

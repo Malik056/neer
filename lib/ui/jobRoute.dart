@@ -207,15 +207,33 @@ class JobRoute extends StatelessWidget {
                           maxHeight: 300,
                         ),
                         child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: List.generate(
-                              canceledContracts.length,
-                              (index) => CanceledContractWidget(
-                                contract: canceledContracts[index],
-                              ),
-                            ),
-                          ),
+                          child: StreamBuilder<List<OpenRequest>>(
+                              stream: globals.canceledRequestBloc,
+                              initialData: [],
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return SizedBox();
+                                }
+                                return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: List.generate(
+                                    snapshot.data.length,
+                                    (index) => Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        OpenRequestWidget(
+                                          openRequest: snapshot.data[index],
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }),
                         ),
                       ),
                     ),

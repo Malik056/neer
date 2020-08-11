@@ -6,6 +6,7 @@ import 'package:neer/globals/constants.dart';
 import 'package:neer/globals/methods.dart';
 import 'package:neer/models/openRequest.dart';
 import 'package:neer/models/quotesModel.dart';
+import 'package:neer/models/requestStatus.dart';
 import 'package:neer/widgets/actionCenterRequestWidget.dart';
 import 'package:neer/widgets/customDialogWidget.dart';
 
@@ -21,16 +22,16 @@ class ActionCenterRoute extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     bool isLoading = false;
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 20,
-          left: 20,
-          right: 20,
-          bottom: 20,
-        ),
-        child: StatefulBuilder(builder: (context, setState) {
-          return ModalProgressHUD(
-            inAsyncCall: isLoading,
+      body: StatefulBuilder(builder: (context, setState) {
+        return ModalProgressHUD(
+          inAsyncCall: isLoading,
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 20,
+              left: 20,
+              right: 20,
+              bottom: 20,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -42,7 +43,7 @@ class ActionCenterRoute extends StatelessWidget {
                   height: 30,
                 ),
                 Text(
-                  'Quotes Job, ${quoteRequests[0].request.requestId}',
+                  'Quotes Job, ${request.requestId}',
                   style: textTheme.headline6,
                 ),
                 SizedBox(
@@ -63,8 +64,16 @@ class ActionCenterRoute extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Center(
-                        child: Text('No Quote yet!'),
+                    : Expanded(
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: Text(
+                              'No Quote yet!',
+                              style: textTheme.headline5,
+                            ),
+                          ),
+                        ),
                       ),
                 SizedBox(
                   height: 50,
@@ -89,15 +98,16 @@ class ActionCenterRoute extends StatelessWidget {
                 ),
               ],
             ),
-          );
-        }),
-      ),
+          ),
+        );
+      }),
     );
   }
 
   Future<bool> cancelJobRequest(BuildContext context) async {
-    return await showDialog(
+    bool result = await showDialog(
       context: context,
+      barrierColor: Colors.white.withAlpha(1),
       builder: (context) {
         return CancelJobRequestDialogWidget(
           description:
@@ -106,28 +116,39 @@ class ActionCenterRoute extends StatelessWidget {
           actionButtonTextColor: Colors.red,
           buttonText: 'YES',
           onClose: () {
-            // Navigator.pop(context);
+            Navigator.pop(context, false);
           },
           onDone: () async {
             if (connectivityBloc.state == ConnectivityResult.none) {
               showInSnackbar('No Internet connection!', context);
-              return;
-            }
-            await Firestore.instance
-                .collection('requests')
-                .document(request.requestId)
-                .delete()
-                .then((value) {
               Navigator.pop(context);
-            }).catchError(
-              (error) {
-                print(error);
-                showInSnackbar('$error', context);
-              },
-            );
+            }
+            Navigator.pop(context, true);
           },
         );
       },
     );
+    if (result ?? false) {
+      result = await Firestore.instance
+          .collection('requests')
+          .document(request.requestId)
+          .setData(
+        {
+          'status': RequestStatus.canceled,
+        },
+        merge: true,
+      ).then((value) {
+        print('deleted');
+        Navigator.pop(context);
+        return true;
+      }).catchError(
+        (error) {
+          print(error);
+          showInSnackbar('$error', context);
+          return false;
+        },
+      );
+    }
+    return result;
   }
 }
