@@ -141,6 +141,9 @@ class PhoneNumberAuthRoute extends StatelessWidget {
                           setState(() {
                             isLoading = true;
                           });
+                          globals.phoneAuthProvider.phoneNumber =
+                              downValue.value +
+                                  _phoneNumberController.text.trim();
                           Navigator.push(
                             context,
                             CupertinoPageRoute(
@@ -187,9 +190,6 @@ class PhoneNumberAuthRoute extends StatelessWidget {
                               setState(() {
                                 isLoading = false;
                               });
-                              globals.phoneAuthProvider.phoneNumber =
-                                  downValue.value +
-                                      _phoneNumberController.text.trim();
                               showInSnackbar('Code Sent', context);
                             },
                             codeAutoRetrievalTimeout: (verificationId) {},
