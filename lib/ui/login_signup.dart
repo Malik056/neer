@@ -8,7 +8,7 @@ import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/ui/phoneVerificationCodePage.dart';
 
 class _PhoneNumberDropDownValue {
-  String value = "+91";
+  String value = "+92";
 }
 
 class PhoneNumberAuthRoute extends StatelessWidget {
@@ -64,6 +64,7 @@ class PhoneNumberAuthRoute extends StatelessWidget {
                     StatefulBuilder(
                       builder: (ctx, setState) => DropdownButton<String>(
                         value: downValue.value,
+                        onTap: null,
                         items: List<DropdownMenuItem<String>>.generate(
                           globals.phoneNumberCountryCodes.length,
                           (index) {
@@ -75,7 +76,9 @@ class PhoneNumberAuthRoute extends StatelessWidget {
                             );
                           },
                         ),
-                        onChanged: (a) {
+                        onChanged:
+                            // null, //REMOVED: on Changed dropdown feature, fixed dropdown to +91
+                            (a) {
                           setState(() {
                             downValue.value = a;
                           });

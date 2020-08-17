@@ -140,16 +140,17 @@ class UserProfile extends StatelessWidget {
                           ),
                           FlatButton.icon(
                             onPressed: () {
-                              Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) {
-                                    return FeedBackRoute();
-                                  },
-                                  settings: RouteSettings(
-                                    name: FeedBackRoute.name,
-                                  ),
-                                ),
-                              );
+                              //REMOVED: Feedback route
+                              // Navigator.of(context).push(
+                              //   CupertinoPageRoute(
+                              //     builder: (context) {
+                              //       return FeedBackRoute();
+                              //     },
+                              //     settings: RouteSettings(
+                              //       name: FeedBackRoute.name,
+                              //     ),
+                              //   ),
+                              // );
                             },
                             icon: Icon(Icons.rate_review),
                             label: Text('Give us feedback'),

@@ -44,6 +44,8 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   expandable: ^4.1.4
   bot_toast: ^3.0.1
+  mailer: ^3.0.4
+
 
 
 

@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neer/bloc/canceledRequestBloc.dart';
+import 'package:neer/bloc/emailDataBloc.dart';
 import 'package:neer/bloc/openRequestsBloc.dart';
+import 'package:neer/bloc/serviceProviderBloc.dart';
 import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/ui/jobRoute.dart';
 import 'package:neer/ui/rainWater.dart';
@@ -30,6 +32,12 @@ class HomeScreenRouteState extends State<HomeScreenRoute> {
     }
     if (globals.canceledRequestBloc == null) {
       globals.canceledRequestBloc = CanceledRequestBloc();
+    }
+    if (globals.serviceProvidersBloc == null) {
+      globals.serviceProvidersBloc = ServiceProvidersBloc();
+    }
+    if (globals.emailDataBloc == null) {
+      globals.emailDataBloc = EmailDataBloc();
     }
     super.initState();
   }

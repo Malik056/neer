@@ -1,13 +1,22 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 class ServiceProviderModel {
   String name;
   String description;
   int licenseExpiryDate;
   double rating;
   int totalReviews;
-  List<String> services = [];
+  List<String> services;
   String id;
+  String email;
+  String phone;
+  String website;
+
+  //
+  bool isFavorite = false;
+
   ServiceProviderModel({
     this.name,
     this.description,
@@ -16,14 +25,14 @@ class ServiceProviderModel {
     this.totalReviews,
     this.services,
     this.id,
+    this.email,
+    this.phone,
+    this.website,
   }) {
     if (services == null) {
       services = [];
     }
   }
-
-  //local
-  bool isFavorite = false;
 
   Map<String, dynamic> toMap() {
     return {
@@ -34,6 +43,9 @@ class ServiceProviderModel {
       'totalReviews': totalReviews,
       'services': services,
       'id': id,
+      'email': email,
+      'phone': phone,
+      'website': website,
     };
   }
 
@@ -48,6 +60,9 @@ class ServiceProviderModel {
       totalReviews: map['totalReviews'],
       services: List<String>.from(map['services']),
       id: map['id'],
+      email: map['email'],
+      phone: map['phone'],
+      website: map['website'],
     );
   }
 
@@ -58,6 +73,6 @@ class ServiceProviderModel {
 
   @override
   String toString() {
-    return 'ServiceProviderModel(name: $name, description: $description, licenseExpiryDate: $licenseExpiryDate, rating: $rating, totalReviews: $totalReviews, services: $services, id: $id)';
+    return 'ServiceProviderModel(name: $name, description: $description, licenseExpiryDate: $licenseExpiryDate, rating: $rating, totalReviews: $totalReviews, services: $services, id: $id, email: $email, phone: $phone, website: $website)';
   }
 }

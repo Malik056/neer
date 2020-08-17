@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:neer/bloc/canceledRequestBloc.dart';
 import 'package:neer/bloc/connectivityBloc.dart';
+import 'package:neer/bloc/emailDataBloc.dart';
 import 'package:neer/bloc/openRequestsBloc.dart';
+import 'package:neer/bloc/serviceProviderBloc.dart';
 import 'package:neer/bloc/waitTimeBloc.dart';
 import 'package:neer/models/contract.dart';
 import 'package:neer/models/milestone.dart';
@@ -88,6 +92,8 @@ List<ServiceProviderModel> serviceProviders = [
 ];
 OpenRequestBloc openRequestBloc;
 CanceledRequestBloc canceledRequestBloc;
+ServiceProvidersBloc serviceProvidersBloc;
+EmailDataBloc emailDataBloc;
 
 List<OpenRequest> openRequests = [
   OpenRequest(
@@ -369,4 +375,6 @@ List<Contract> contracts = [
 ];
 
 User user;
-final List<String> phoneNumberCountryCodes = ["+91"]; //["+1", "+91", "+92"];
+final List<String> phoneNumberCountryCodes = [
+  "+92"
+]; //["+1", "+91", "+92"]; //REMOVED: COUNTRY CODES

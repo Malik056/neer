@@ -48,3 +48,4 @@ ios/Runner/GoogleService-Info.plist
 AuthKey_3JW7K49V9F.p8
 DevelopmentProfileForNeerApp (1).mobileprovision
 ios/build/XCBuildData/build.db
+lib/globals/secrets.dart
