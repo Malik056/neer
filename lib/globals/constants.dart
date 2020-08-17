@@ -369,4 +369,4 @@ List<Contract> contracts = [
 ];
 
 User user;
-final List<String> phoneNumberCountryCodes = ["+1", "+91", "+92"];
+final List<String> phoneNumberCountryCodes = ["+91"]; //["+1", "+91", "+92"];
