@@ -55,9 +55,9 @@ class ServiceProviderModel {
     return ServiceProviderModel(
       name: map['name'],
       description: map['description'],
-      licenseExpiryDate: map['licenseExpiryDate'],
-      rating: map['rating'],
-      totalReviews: map['totalReviews'],
+      licenseExpiryDate: (map['licenseExpiryDate'] as num).toInt(),
+      rating: (map['rating'] as num).toDouble(),
+      totalReviews: (map['totalReviews'] as num).toInt(),
       services: List<String>.from(map['services']),
       id: map['id'],
       email: map['email'],
