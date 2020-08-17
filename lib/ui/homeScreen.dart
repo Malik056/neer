@@ -9,6 +9,9 @@ import 'package:neer/ui/userProfile.dart';
 
 class HomeScreenRoute extends StatefulWidget {
   static String name = "HomeScreenRoute";
+  final initialIndex;
+
+  const HomeScreenRoute({Key key, this.initialIndex = 0}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -21,6 +24,7 @@ class HomeScreenRouteState extends State<HomeScreenRoute> {
   bool exitApp = false;
   @override
   void initState() {
+    selectedIndex = widget.initialIndex;
     if (globals.openRequestBloc == null) {
       globals.openRequestBloc = OpenRequestBloc();
     }
