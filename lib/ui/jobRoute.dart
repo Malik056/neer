@@ -77,7 +77,7 @@ class JobRoute extends StatelessWidget {
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: List.generate(
-                                    snapshot.data.length,
+                                    0, //snapshot.data.length, //REMOVED ALL ELEMENTS
                                     (index) => Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -128,7 +128,7 @@ class JobRoute extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: List.generate(
-                              globals.contracts.length,
+                              0, //globals.contracts.length, //REMOVED ALL ELEMENTS
                               (index) => ContractWidget(
                                 contract: globals.contracts[index],
                               ),
@@ -169,7 +169,7 @@ class JobRoute extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: List.generate(
-                              completedContracts.length,
+                              0, //completedContracts.length, //REMOVED ALL ELEMENTS
                               (index) => CompletedContractWidget(
                                 contract: completedContracts[index],
                               ),
@@ -218,7 +218,7 @@ class JobRoute extends StatelessWidget {
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: List.generate(
-                                    snapshot.data.length,
+                                    0, //snapshot.data.length, // REMOVED: All Elements
                                     (index) => Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,

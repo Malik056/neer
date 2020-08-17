@@ -68,16 +68,17 @@ class UserProfile extends StatelessWidget {
                               IconButton(
                                 icon: Icon(Icons.edit),
                                 onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      CupertinoPageRoute(
-                                        builder: (context) {
-                                          return EditProfileRoute();
-                                        },
-                                        settings: RouteSettings(
-                                          name: EditProfileRoute.name,
-                                        ),
-                                      ));
+                                  //REMOVED: Link To Edit Profile
+                                  // Navigator.push(
+                                  //     context,
+                                  //     CupertinoPageRoute(
+                                  //       builder: (context) {
+                                  //         return EditProfileRoute();
+                                  //       },
+                                  //       settings: RouteSettings(
+                                  //         name: EditProfileRoute.name,
+                                  //       ),
+                                  //     ));
                                 },
                               ),
                             ],
@@ -87,17 +88,18 @@ class UserProfile extends StatelessWidget {
                           ),
                           FlatButton.icon(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) {
-                                    return HelpCenterRoute();
-                                  },
-                                  settings: RouteSettings(
-                                    name: HelpCenterRoute.name,
-                                  ),
-                                ),
-                              );
+                              //REMOVED: Link to HelpCenterRoute
+                              // Navigator.push(
+                              //   context,
+                              //   CupertinoPageRoute(
+                              //     builder: (context) {
+                              //       return HelpCenterRoute();
+                              //     },
+                              //     settings: RouteSettings(
+                              //       name: HelpCenterRoute.name,
+                              //     ),
+                              //   ),
+                              // );
                             },
                             icon: Image.asset(
                               'images/support.png',
