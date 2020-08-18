@@ -19,6 +19,7 @@ class EmailDataBloc extends Bloc<DocumentSnapshot, MyEmail> {
       yield MyEmail(
         subject: event.data['subject'],
         body: event.data['body'],
+        senderName: event.data['senderName'],
       );
     } else {
       yield MyEmail();

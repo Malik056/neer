@@ -33,6 +33,7 @@ class ProviderProfile extends StatelessWidget {
               ServiceProviderWidget(
                 serviceProvider: serviceProviderModel,
                 fullVersion: false,
+                requestData: null,
               ),
               Divider(
                 height: 0,

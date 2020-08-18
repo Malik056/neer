@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:neer/models/rainWater.dart';
 import 'package:neer/models/requestData.dart';
 import 'package:neer/models/serviceType.dart';
@@ -44,5 +45,10 @@ class OpenRequest {
           : null,
       userId: map['userId'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'OpenRequest(requestId: $requestId, initializeDate: $initializeDate, userId: $userId, serviceType: $serviceType, requestData: $requestData, status: $status)';
   }
 }

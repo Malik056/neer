@@ -10,7 +10,6 @@ import 'package:neer/models/requestStatus.dart';
 import 'package:neer/models/serviceType.dart';
 import 'package:neer/ui/homeScreen.dart';
 import 'package:neer/ui/thankyouRoute.dart';
-import 'package:neer/widgets/serviceProviderWidget.dart';
 
 class RainWaterRoute extends StatefulWidget {
   static String routeName = "RainWaterRoute";
@@ -463,11 +462,13 @@ class _RainWaterForm2RouteState extends State<_RainWaterForm2Route> {
                                     setState(() {
                                       isLoading = false;
                                     });
+                                    openRequest.requestId = value.documentID;
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       CupertinoPageRoute(
                                         builder: (context) => ThankYouRoute(
-                                            requestId: value.documentID),
+                                          requestData: openRequest,
+                                        ),
                                         settings: RouteSettings(
                                           name: ThankYouRoute.name,
                                         ),

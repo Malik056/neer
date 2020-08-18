@@ -25,7 +25,7 @@ class LatLng {
   }
 }
 
-class RainWater with RequestData {
+class RainWater extends RequestData {
   String jobAddress;
   LatLng latlng;
   String serviceArea;
@@ -38,6 +38,8 @@ class RainWater with RequestData {
   String countAndDepthOfWells;
   String noOfRainWaterDischargePipes;
   String otherInformation;
+  String requestId;
+
   RainWater({
     this.jobAddress,
     this.latlng,
@@ -51,7 +53,8 @@ class RainWater with RequestData {
     this.countAndDepthOfWells,
     this.noOfRainWaterDischargePipes,
     this.otherInformation,
-  }) {
+    this.requestId,
+  }) : super(requestId) {
     if (sources == null) {
       sources = [];
     }
@@ -59,6 +62,7 @@ class RainWater with RequestData {
 
   Map<String, dynamic> toMap() {
     return {
+      'requestId': requestId,
       'jobAddress': jobAddress,
       'latlng': latlng?.toMap(),
       'serviceArea': serviceArea,
@@ -78,6 +82,7 @@ class RainWater with RequestData {
     if (map == null) return null;
 
     return RainWater(
+      requestId: map['requestId'],
       jobAddress: map['jobAddress'],
       latlng: LatLng.fromMap(map['latlng']),
       serviceArea: map['serviceArea'],
@@ -91,5 +96,10 @@ class RainWater with RequestData {
       noOfRainWaterDischargePipes: map['noOfRainWaterDischargePipes'],
       otherInformation: map['otherInformation'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'RainWater(jobAddress: $jobAddress, latlng: $latlng, serviceArea: $serviceArea, roofType: $roofType, existingSetupAvailable: $existingSetupAvailable, sources: $sources, demandBeingMet: $demandBeingMet, qualityOfWaterPerDay: $qualityOfWaterPerDay, availableWells: $availableWells, countAndDepthOfWells: $countAndDepthOfWells, noOfRainWaterDischargePipes: $noOfRainWaterDischargePipes, otherInformation: $otherInformation)';
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:neer/bloc/canceledRequestBloc.dart';
 import 'package:neer/bloc/connectivityBloc.dart';
@@ -376,5 +374,5 @@ List<Contract> contracts = [
 
 User user;
 final List<String> phoneNumberCountryCodes = [
-  "+92"
+  "+91"
 ]; //["+1", "+91", "+92"]; //REMOVED: COUNTRY CODES

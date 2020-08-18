@@ -8,7 +8,7 @@ import 'package:neer/globals/constants.dart' as globals;
 import 'package:neer/ui/phoneVerificationCodePage.dart';
 
 class _PhoneNumberDropDownValue {
-  String value = "+92";
+  String value = "+91";
 }
 
 class PhoneNumberAuthRoute extends StatelessWidget {

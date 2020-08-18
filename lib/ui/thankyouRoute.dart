@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neer/globals/constants.dart' as constants;
+import 'package:neer/models/openRequest.dart';
 import 'package:neer/ui/homeScreen.dart';
 import 'package:neer/widgets/serviceProviderWidget.dart';
 
 class ThankYouRoute extends StatelessWidget {
   static final String name = "ThankYouRoute";
-  final String requestId;
+  final OpenRequest requestData;
 
-  const ThankYouRoute({Key key, this.requestId}) : super(key: key);
+  const ThankYouRoute({Key key, this.requestData}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -90,7 +91,7 @@ class ThankYouRoute extends StatelessWidget {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "You Job Reference ID - $requestId",
+                  "You Job Reference ID - ${requestData.requestId ?? ''}",
                   textAlign: TextAlign.center,
                   style: textTheme.headline6
                       .copyWith(fontWeight: FontWeight.normal),
@@ -118,6 +119,7 @@ class ThankYouRoute extends StatelessWidget {
                     child: ServiceProviderWidget(
                       serviceProvider: constants.serviceProviders[index],
                       fullVersion: true,
+                      requestData: requestData,
                     ),
                   ),
                 ),
