@@ -6,7 +6,7 @@ import 'package:neer/globals/methods.dart';
 import 'package:neer/globals/secrets.dart' as secrets;
 import 'package:neer/models/serviceProviderModel.dart';
 import 'package:rating_bar/rating_bar.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 class ServiceProviderWidget extends StatelessWidget {
   final ServiceProviderModel serviceProvider;
@@ -138,15 +138,15 @@ class ServiceProviderWidget extends StatelessWidget {
                         onTap: () async {
                           final url =
                               'tel:${serviceProvider.phone ?? '+911234512345'}';
-                          if (await canLaunch(url)) {
-                            launch(url);
-                          } else {
-                            showInSnackbar(
-                              'Can\'t open dialer',
-                              context,
-                              color: Colors.red,
-                            );
-                          }
+                          // if (await canLaunch(url)) {
+                          //   launch(url);
+                          // } else {
+                          //   showInSnackbar(
+                          //     'Can\'t open dialer',
+                          //     context,
+                          //     color: Colors.red,
+                          //   );
+                          // }
                         },
                       ),
                       SizedBox(
@@ -157,15 +157,15 @@ class ServiceProviderWidget extends StatelessWidget {
                         onTap: () async {
                           final url =
                               '${serviceProvider.website ?? 'https://www.iccwindia.org/'}';
-                          if (await canLaunch(url)) {
-                            launch(url);
-                          } else {
-                            showInSnackbar(
-                              'Couldn\'t open the url',
-                              context,
-                              color: Colors.red,
-                            );
-                          }
+                          // if (await canLaunch(url)) {
+                          //   launch(url);
+                          // } else {
+                          //   showInSnackbar(
+                          //     'Couldn\'t open the url',
+                          //     context,
+                          //     color: Colors.red,
+                          //   );
+                          // }
                         },
                       ),
                       SizedBox(
