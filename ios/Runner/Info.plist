@@ -55,6 +55,6 @@
     <key>NSLocationAlwaysUsageDescription</key>
     <string>This app requires your location in order to work</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app requires your location in order to work properly</string>Ï
+    <string>This app requires your location in order to work properly</string>
 </dict>
 </plist>
