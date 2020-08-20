@@ -137,7 +137,7 @@ class _PhoneVerificationCodeRouteState
                                 );
                                 globals.phoneAuthProvider.credentials =
                                     credentials;
-                                signIn(credentials);
+                                signIn(credentials, context);
                               } catch (err) {
                                 methods.showInSnackbar('Bad OTP', context);
                                 stopAutoAuth = false;
@@ -189,7 +189,7 @@ class _PhoneVerificationCodeRouteState
                                                       .authenticated);
                                               globals.phoneAuthProvider
                                                   .credentials = credentials;
-                                              signIn(credentials);
+                                              signIn(credentials, context);
                                             },
                                             verificationFailed: (ex) {
                                               globals.phoneAuthProvider
@@ -239,7 +239,7 @@ class _PhoneVerificationCodeRouteState
     );
   }
 
-  Future signIn(credentials) async {
+  Future signIn(credentials, context) async {
     if (credentials == null) {
       stopAutoAuth = false;
       setState(() {
